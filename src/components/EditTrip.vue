@@ -1,0 +1,97 @@
+<template>
+  <div style="width:70vw; margin-left:15vw">
+	<div v-if="data.loaded">
+		<h2>{{ data.trip.title }}</h2>
+		<h2>{{ data.trip.body }}</h2>
+		 <b-table
+				:data="data.list"
+				:columns="columns"
+				:selected.sync="data.list[selected]"
+				focusable>
+			</b-table>
+	</div>
+	<div v-else>
+		LOADING...
+	</div>
+  </div> 
+</template>
+
+<script>
+import Vue from 'vue'
+export default {
+  name: 'TripList',
+  data() {
+    const data = {
+		list: [{ 'id': 1, 'first_name': 'Jesse', 'last_name': 'Simmons', 'date': '2016-10-15 13:43:27', 'gender': 'Male' },
+                { 'id': 2, 'first_name': 'John', 'last_name': 'Jacobs', 'date': '2016-12-15 06:00:53', 'gender': 'Male' },
+                { 'id': 3, 'first_name': 'Tina', 'last_name': 'Gilbert', 'date': '2016-04-26 06:26:28', 'gender': 'Female' },
+                { 'id': 4, 'first_name': 'Clarence', 'last_name': 'Flores', 'date': '2016-04-10 10:28:46', 'gender': 'Male' },
+                { 'id': 5, 'first_name': 'Anne', 'last_name': 'Lee', 'date': '2016-12-06 14:38:38', 'gender': 'Female' }
+				],
+		loaded: false,
+		trip: {}
+		}
+
+            return {
+                data,
+                selected: 1,
+                columns: [
+                    {
+                        field: 'id',
+                        label: 'ID',
+                        width: '40',
+                        numeric: true
+                    },
+                    {
+                        field: 'first_name',
+                        label: 'First Name',
+                    },
+                    {
+                        field: 'last_name',
+                        label: 'Last Name',
+                    },
+                    {
+                        field: 'date',
+                        label: 'Date',
+                        centered: true
+                    },
+                    {
+                        field: 'gender',
+                        label: 'Gender',
+                    }
+                ]
+            }
+  },
+  methods: {
+	getTrip(index) {
+		Vue.http.get('https://jsonplaceholder.typicode.com/posts/' + index).then(response => {
+			var trip = JSON.parse(response.bodyText);
+			console.log(trip);
+			this.data.trip = trip;
+			this.data.loaded = true;
+		});
+	}
+  },
+  beforeMount(){
+    this.getTrip(this.$route.params.id);
+ }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped>
+h1, h2 {
+  font-weight: normal;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+a {
+  color: #42b983;
+}
+</style>
