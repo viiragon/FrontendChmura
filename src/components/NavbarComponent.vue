@@ -25,7 +25,7 @@
       </a>
     </div>
     <div class="navbar-end">
-      <a class="navbar-item" href="https://buefy.github.io/#/">
+      <a class="navbar-item" href="https://chmuryweb2018.azurewebsites.net/#/map">
         Nasza produkcja
       </a>
       <a class="navbar-item" href="https://buefy.github.io/#/">
