@@ -4,9 +4,9 @@
 		<h2>{{ data.trip.title }}</h2>
 		<h2>{{ data.trip.body }}</h2>
 		 <b-table
-				:data="data.list"
+				:data="data.list.waypoints"
 				:columns="columns"
-				:selected.sync="data.list[selected]"
+				:selected.sync="data.list.waypoints[selected]"
 				focusable>
 			</b-table>
 	</div>
@@ -19,62 +19,72 @@
 <script>
 import Vue from 'vue'
 export default {
-  name: 'TripList',
-  data() {
-    const data = {
-		list: [{ 'id': 1, 'first_name': 'Jesse', 'last_name': 'Simmons', 'date': '2016-10-15 13:43:27', 'gender': 'Male' },
-                { 'id': 2, 'first_name': 'John', 'last_name': 'Jacobs', 'date': '2016-12-15 06:00:53', 'gender': 'Male' },
-                { 'id': 3, 'first_name': 'Tina', 'last_name': 'Gilbert', 'date': '2016-04-26 06:26:28', 'gender': 'Female' },
-                { 'id': 4, 'first_name': 'Clarence', 'last_name': 'Flores', 'date': '2016-04-10 10:28:46', 'gender': 'Male' },
-                { 'id': 5, 'first_name': 'Anne', 'last_name': 'Lee', 'date': '2016-12-06 14:38:38', 'gender': 'Female' }
-				],
-		loaded: false,
-		trip: {}
+	name: 'TripList',
+	data() {
+		const data = {
+			list: {
+				name: "Okolice Warszawy",
+				description: "Blablabla",
+				start: "2017-08-22T06:11:00.000Z",
+				end: "2017-09-22T06:11:00.000Z",
+				waypoints: []
+			},
+			loaded: false,
+			trip: {}
 		}
 
-            return {
-                data,
-                selected: 1,
-                columns: [
-                    {
-                        field: 'id',
-                        label: 'ID',
-                        width: '40',
-                        numeric: true
-                    },
-                    {
-                        field: 'first_name',
-                        label: 'First Name',
-                    },
-                    {
-                        field: 'last_name',
-                        label: 'Last Name',
-                    },
-                    {
-                        field: 'date',
-                        label: 'Date',
-                        centered: true
-                    },
-                    {
-                        field: 'gender',
-                        label: 'Gender',
-                    }
-                ]
-            }
-  },
-  methods: {
-	getTrip(index) {
-		Vue.http.get('https://jsonplaceholder.typicode.com/posts/' + index).then(response => {
-			var trip = JSON.parse(response.bodyText);
-			console.log(trip);
-			this.data.trip = trip;
-			this.data.loaded = true;
-		});
+		return {
+			data,
+			selected: 1,
+			columns: [
+				{
+					field: 'latitude',
+					label: 'Latitude',
+					width: '40',
+					numeric: true
+				},
+				{
+					field: 'longitude',
+					label: 'Longitude',
+					width: '40',
+					numeric: true
+				},
+				{
+					field: 'date',
+					label: 'Date',
+					centered: true
+				}
+			]
+		}
+	},
+	methods: {
+		getTrip(index) {
+			Vue.http.get('https://jsonplaceholder.typicode.com/posts/' + index).then(response => {
+				var trip = JSON.parse(response.bodyText);
+				console.log(trip);
+				this.data.trip = trip;
+				this.data.loaded = true;
+			});
+		},
+		getRandomWayPoint() {
+			this.data.list.waypoints.push({
+				"latitude": (Math.random() - 0.5) * 90,
+				"longitude": (Math.random() - 0.5) * 180,
+				"date": "2017-09-22T06:11:00.000Z",
+				"photos": [],
+				"videos": []
+			});
+		}
+	},
+	beforeMount(){
+		this.getTrip(this.$route.params.id);
+		this.getRandomWayPoint();
+		this.getRandomWayPoint();
+		this.getRandomWayPoint();
+		this.getRandomWayPoint();
+		this.getRandomWayPoint();
+		this.getRandomWayPoint();
 	}
-  },
-  beforeMount(){
-    this.getTrip(this.$route.params.id);
- }
 }
 </script>
 
