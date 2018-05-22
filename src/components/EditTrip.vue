@@ -6,7 +6,6 @@
 			<b-table
 				:data="siteData.trip.waypoints"
 				:columns="columns"
-				:selected.sync="siteData.trip.waypoints[selected]"
 				focusable>
 			</b-table>
 		</div>
@@ -17,26 +16,8 @@
 </template>
 
 <script>
+				//:selected.sync="siteData.trip.waypoints[selected]"
 import Vue from 'vue'
-
-function findInXML(collection, name) {
-	for (var i = 0; i < collection.length; i++) {
-		if (collection[i].nodeName == name) {
-			return collection[i];
-		}
-	}
-	return null;
-}
-
-function findAllInXML(collection, name) {
-	var list = [];
-	for (var i = 0; i < collection.length; i++) {
-		if (collection[i].nodeName == name) {
-			list.push(collection[i]);
-		}
-	}
-	return list;
-}
 
 var formatDate = function(value) {
 	return value.getDate() + "." + (value.getMonth() + 1) + "." + (value.getYear() + 1900); 
@@ -86,22 +67,20 @@ export default {
 			});
 		},
 		setDummyTrip() {
-			this.siteData.trip = {
-				name: "Okolice Warszawy",
-				description: "Blablabla",
-				start: new Date("2017-08-22T06:11:00.000Z"),
-				end: new Date("2017-09-22T06:11:00.000Z"),
-				waypoints: []
-			};
+			this.siteData.trip = createTrip(
+				"Okolice Warszawy", 
+				"Blablabla",
+				new Date("2017-08-22T06:11:00.000Z"),
+				new Date("2017-09-22T06:11:00.000Z"),
+				[]
+			);
 		},
 		getRandomWayPoint() {
-			this.siteData.trip.waypoints.push({
-				"latitude": (Math.random() - 0.5) * 90,
-				"longitude": (Math.random() - 0.5) * 180,
-				"date": new Date("2017-09-22T06:11:00.000Z"),
-				"photos": [],
-				"videos": []
-			});
+			this.siteData.trip.waypoints.push(createWaypoint(
+				(Math.random() - 0.5) * 90, 
+				(Math.random() - 0.5) * 180,
+				new Date("2017-09-22T06:11:00.000Z"))
+			);
 		},
 		readGPSFile(fileText) {	
 			try {
@@ -121,37 +100,43 @@ export default {
 				var point;
 				for (var i = 0; i < trkpts.length; i++) {
 					point = trkpts[i];
-					wayPoints.push({
-						"latitude": parseFloat(point.attributes.lat.nodeValue),
-						"longitude": parseFloat(point.attributes.lon.nodeValue),
-						"date": new Date(findInXML(point.children, "time").innerHTML),
-						"photos": [],
-						"videos": []
-					});
+					wayPoints.push(createWaypoint(
+						parseFloat(point.attributes.lat.nodeValue), 
+						parseFloat(point.attributes.lon.nodeValue),
+						new Date(findInXML(point.children, "time").innerHTML))
+					);
 				}
-				var trip = {
-					name: name,
-					description: "Blablabla",
-					start: Date.parse("2017-08-22T06:11:00.000Z"),
-					end: Date.parse("2017-09-22T06:11:00.000Z"),
-					waypoints: wayPoints
-				};
+				var trip = createTrip(
+					name, 
+					"Blablabla", 
+					Date.parse("2017-08-22T06:11:00.000Z"), 
+					Date.parse("2017-09-22T06:11:00.000Z"), 
+					wayPoints
+				);
 				return trip;
 			} catch(err) {
 				console.log(err);
 				return null;
 			}
+		},
+		saveGPSFile() {
+			
+		}, 
+		save() {
+			
+		}, 
+		addPhoto(id, photo) {
+			
+		}, 
+		addVideo(id, video) {
+			
+		}, 
+		deleteItem(id) {
+			
 		}
 	},
 	beforeMount(){
-		this.getTrip(this.$route.params.id);
-		/*this.setDummyTrip();
-		this.getRandomWayPoint();
-		this.getRandomWayPoint();
-		this.getRandomWayPoint();
-		this.getRandomWayPoint();
-		this.getRandomWayPoint();
-		this.getRandomWayPoint();*/
+		//this.getTrip(this.$route.params.id);
 		var trip = this.readGPSFile(	
 			"<gpx>" +
 			"	<metadata>" +
@@ -161,7 +146,7 @@ export default {
 			"		<time>2009-10-17T22:58:43Z</time>" +
 			"	</metadata>" +
 			"	<trk>" +
-			"		<name>Example GPX Document</name>" +
+			"		<name>HELLO!</name>" +
 			"		<trkseg>" +
 			"			<trkpt lat=\"47.644548\" lon=\"-122.326897\">" +
 			"				<ele>4.46</ele>" +
@@ -183,6 +168,45 @@ export default {
 			this.siteData.trip = trip;
 		}
 	}
+}
+
+function createTrip(name, description, startDate, endDate, waypoints) {
+	return {
+		name: name,
+		description: description,
+		start: startDate,
+		end: endDate,
+		waypoints: waypoints
+	};
+}
+
+function createWaypoint(lat, lon, date) {
+	return {
+		"latitude": lat,
+		"longitude": lon,
+		"date": date,
+		"photos": [],
+		"videos": []
+	};
+}
+
+function findInXML(collection, name) {
+	for (var i = 0; i < collection.length; i++) {
+		if (collection[i].nodeName == name) {
+			return collection[i];
+		}
+	}
+	return null;
+}
+
+function findAllInXML(collection, name) {
+	var list = [];
+	for (var i = 0; i < collection.length; i++) {
+		if (collection[i].nodeName == name) {
+			list.push(collection[i]);
+		}
+	}
+	return list;
 }
 </script>
 
