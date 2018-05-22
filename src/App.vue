@@ -1,15 +1,20 @@
 <template>
+  
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
+    <app-navbar></app-navbar>
+    <router-view class="container"/>
   </div>
 </template>
 
 <script>
 
+import Navbar from "@/components/NavbarComponent";
 
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    'app-navbar': Navbar
+  }
 }
 </script>
 
@@ -18,9 +23,8 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  min-height: 100vh;
 }
 
 $bg-color: #f5f5f5;
