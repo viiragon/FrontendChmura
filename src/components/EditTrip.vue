@@ -3,13 +3,18 @@
 		<a id="download" href="data" download="null.txt"></a>
 		<div v-if="siteData.loaded">
 			<h2>{{ siteData.trip.name }}</h2>
+			<input v-model="siteData.trip.name"/>
 			<h2>{{ siteData.trip.description }}</h2>
+			<input v-model="siteData.trip.description"/>
 			<b-table
 				:data="siteData.trip.waypoints"
 				:columns="columns"
 				focusable>
 			</b-table>
-		</div>
+			<input v-on:click="saveGPSFile" type="button" value="Save GPS file">
+			<input v-on:click="readGPSFile" type="file" name="Read GPS file"> 
+			<input v-on:click="save" type="button" value="Save data">
+			</div>
 		<div v-else>
 			LOADING...
 		</div>
@@ -53,6 +58,12 @@ export default {
 				{
 					field: 'date',
 					label: 'Date',
+					centered: true,
+					formatter: formatDate
+				},
+				{
+					field: '',
+					label: 'Option',
 					centered: true,
 					formatter: formatDate
 				}
