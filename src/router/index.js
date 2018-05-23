@@ -6,6 +6,8 @@ import Buefy from "buefy";
 import "buefy/lib/buefy.css";
 Vue.use(Buefy);
 import HelloWorld from "@/components/HelloWorld";
+import StartView from"@/components/StartView";
+import TripListView from "@/components/TripListView";
 import TripList from "@/components/TripList";
 import MapView from "@/components/MapView";
 import EditTrip from "@/components/EditTrip";
@@ -14,15 +16,28 @@ Vue.use(Router);
 
 export default new Router({
   routes: [
-    {
+	{
       path: "/",
+      name: "StartView",
+      component: StartView
+    },
+
+    {
+      path: "/info",
       name: "HelloWorld",
       component: HelloWorld
     },
+
     {
       path: "/list",
       name: "TripList",
       component: TripList
+    },
+
+	{
+      path: "/trips",
+      name: "TripListView",
+      component: TripListView
     },
 
     {

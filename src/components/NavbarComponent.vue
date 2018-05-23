@@ -13,9 +13,15 @@
 
   <div id="navbarExampleTransparentExample" class="navbar-menu container">
     <div class="navbar-start">
-      
+
+	  <a class="navbar-item" href="/#/">
+        Start
+      </a>
       <a class="navbar-item" href="/#/list">
         List
+      </a>
+	  <a class="navbar-item" href="/#/trips">
+        Trips
       </a>
       <a class="navbar-item" href="/#/trip/1">
         Trip
