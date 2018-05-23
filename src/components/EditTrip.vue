@@ -2,18 +2,29 @@
 	<div style="width:70vw; margin-left:15vw">
 		<a id="download" href="data" download="null.txt"></a>
 		<div v-if="siteData.loaded">
-			<h2>{{ siteData.trip.name }}</h2>
-			<input v-model="siteData.trip.name"/>
-			<h2>{{ siteData.trip.description }}</h2>
-			<input v-model="siteData.trip.description"/>
+			<!--<h1>{{ siteData.trip.name }}</h1>-->
+			<b-field>
+				<b-input placeholder="Name" v-model="siteData.trip.name"></b-input>
+			</b-field>
+			<!--<input v-model="siteData.trip.name"/>-->
+			<!--<h2>{{ siteData.trip.description }}</h2>-->
+			<b-field>
+				<b-input placeholder="Description" v-model="siteData.trip.description"></b-input>
+			</b-field>
+			<!--<input v-model="siteData.trip.description"/>-->
 			<b-table
 				:data="siteData.trip.waypoints"
 				:columns="columns"
 				focusable>
 			</b-table>
-			<input v-on:click="saveGPSFile" type="button" value="Save GPS file">
-			<input v-on:click="readGPSFile" type="file" name="Read GPS file"> 
-			<input v-on:click="save" type="button" value="Save data">
+			<input class="button is-link" v-on:click="saveGPSFile" type="button" value="Save GPS file">
+			<b-upload v-model="files">
+            <a class="button is-link">
+                <b-icon icon="upload"></b-icon>
+					<span>Read GPS file</span>
+				</a>
+			</b-upload>
+			<input class="button is-link" v-on:click="save" type="button" value="Save data">
 			</div>
 		<div v-else>
 			LOADING...
@@ -22,6 +33,7 @@
 </template>
 
 <script>
+			//<input class="button is-link" v-on:click="readGPSFile" type="file" name="Read GPS file"> 
 				//:selected.sync="siteData.trip.waypoints[selected]"
 				// v-on:click="saveGPSFile"
 import Vue from 'vue'
@@ -322,8 +334,11 @@ function findAllInXML(collection, name) {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
+h2 {
   font-weight: normal;
+}
+h1 {
+  font-weight: bold;
 }
 ul {
   list-style-type: none;
