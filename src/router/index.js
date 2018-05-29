@@ -5,51 +5,82 @@ Vue.use(vueResource);
 import Buefy from "buefy";
 import "buefy/lib/buefy.css";
 Vue.use(Buefy);
+import auth from '../auth'
 import HelloWorld from "@/components/HelloWorld";
 import StartView from"@/components/StartView";
 import TripListView from "@/components/TripListView";
 import TripList from "@/components/TripList";
 import MapView from "@/components/MapView";
 import EditTrip from "@/components/EditTrip";
+import LoginView from "@/components/LoginView";
 
-Vue.use(Router);
+Vue.use(Router)
+
+const ifNotAuthenticated = (to, from, next) => {
+  if (!auth.getters.isAuthenticated) {
+    next()
+    return
+  }
+  next('/')
+}
+
+const ifAuthenticated = (to, from, next) => {
+  if (auth.getters.isAuthenticated) {
+    next()
+    return
+  }
+  next('/login')
+}
 
 export default new Router({
   routes: [
 	{
-      path: "/",
-      name: "StartView",
-      component: StartView
+		path: "/",
+		name: "StartView",
+		component: StartView,
+		beforeEnter: ifAuthenticated
+    },
+	
+	{
+		path: "/login",
+		name: "LoginView",
+		component: LoginView,
+		beforeEnter: ifNotAuthenticated
     },
 
     {
-      path: "/info",
-      name: "HelloWorld",
-      component: HelloWorld
+		path: "/info",
+		name: "HelloWorld",
+		component: HelloWorld,
+		beforeEnter: ifAuthenticated
     },
 
     {
-      path: "/list",
-      name: "TripList",
-      component: TripList
+		path: "/list",
+		name: "TripList",
+		component: TripList,
+		beforeEnter: ifAuthenticated
     },
 
 	{
-      path: "/trips",
-      name: "TripListView",
-      component: TripListView
+		path: "/trips",
+		name: "TripListView",
+		component: TripListView,
+		beforeEnter: ifAuthenticated
     },
 
     {
-      path: "/map",
-      name: "MapView",
-      component: MapView
+		path: "/map",
+		name: "MapView",
+		component: MapView,
+		beforeEnter: ifAuthenticated
     },
 
     {
-      path: "/trip/:id",
-      name: "EditTrip",
-      component: EditTrip
+		path: "/trip/:id",
+		name: "EditTrip",
+		component: EditTrip,
+		beforeEnter: ifAuthenticated
     }
   ]
 });

@@ -12,8 +12,7 @@
   </div> -->
 
   <div id="navbarExampleTransparentExample" class="navbar-menu container">
-    <div class="navbar-start">
-
+    <div v-if="isAuthenticated" class="navbar-start">
 	  <a class="navbar-item" href="/#/">
         Start
       </a>
@@ -28,6 +27,9 @@
       </a>
       <a class="navbar-item" href="/#/map">
         Map
+      </a>
+      <a class="navbar-item" @click="logout">
+        Logout
       </a>
     </div>
     <div class="navbar-end">
@@ -49,9 +51,24 @@
 </template>
 
 <script>
-export default {
-  name: "Navbar"
-};
+	import { mapGetters, mapState } from 'vuex'
+	import { AUTH_LOGOUT } from '../auth/actions'
+	
+	export default {
+		name: "Navbar",
+		methods: {
+			logout: function () {
+				this.$store.dispatch(AUTH_LOGOUT).then(() => this.$router.push('/login'))
+			}
+		},
+		computed: {
+			...mapGetters(['getProfile', 'isAuthenticated', 'isProfileLoaded']),
+			...mapState({
+				authLoading: state => state.auth.status === 'loading',
+				name: state => `${state.user.profile.name}`,
+			})
+		}
+	};
 </script>
 <style>
 .navbar {

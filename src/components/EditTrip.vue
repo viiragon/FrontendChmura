@@ -1,5 +1,5 @@
 <template>
-	<div style="width:70vw; margin-left:15vw">
+	<section class="section">
 		<a id="download" href="data" download="null.txt"></a>
 		<div v-if="siteData.loaded">
 			<!--<h1>{{ siteData.trip.name }}</h1>-->
@@ -16,7 +16,11 @@
 				:data="siteData.trip.waypoints"
 				:columns="columns"
 				focusable>
+				<button>
+					bbb
+				</button>
 			</b-table>
+			<hr/>
 			<input class="button is-link" v-on:click="saveGPSFile" type="button" value="Save GPS file">
 			<b-upload v-model="files">
             <a class="button is-link">
@@ -29,7 +33,7 @@
 		<div v-else>
 			LOADING...
 		</div>
-	</div> 
+	</section> 
 </template>
 
 <script>
