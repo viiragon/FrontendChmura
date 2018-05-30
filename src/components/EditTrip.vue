@@ -11,6 +11,7 @@
 			<b-field>
 				<b-input placeholder="Description" v-model="siteData.trip.description"></b-input>
 			</b-field>
+			<map-component @point-added="addPoint"></map-component>
 			<!--<input v-model="siteData.trip.description"/>-->
 			<b-table
 				:data="siteData.trip.waypoints"
@@ -41,6 +42,7 @@
 				//:selected.sync="siteData.trip.waypoints[selected]"
 				// v-on:click="saveGPSFile"
 import Vue from 'vue'
+import MapComponent from './MapView';
 
 var formatDate = function(value) {
 	return value.getDate() + "." + (value.getMonth() + 1) + "." + (value.getYear() + 1900); 
@@ -48,6 +50,7 @@ var formatDate = function(value) {
 	
 export default {
 	name: 'TripList',
+	components: { 'map-component': MapComponent },
 	data() {
 		const siteData = {
 			trip: {},
@@ -87,6 +90,14 @@ export default {
 		}
 	},
 	methods: {
+		addPoint(point) {
+			console.log(point)
+			this.siteData.trip.waypoints.push(createWaypoint(
+				point.lat, 
+				point.lng,
+				point.date
+			));
+		},
 		getTrip(index) {
 			Vue.http.get('https://jsonplaceholder.typicode.com/posts/' + index).then(response => {
 				var trip = JSON.parse(response.bodyText);
@@ -273,18 +284,6 @@ export default {
 			"	</metadata>" +
 			"	<trk>" +
 			"		<trkseg>" +
-			"			<trkpt lat=\"47.645645\" lon=\"-122.246553\">" +
-			"				<ele>4.46</ele>" +
-			"				<time>2009-10-17T18:37:26Z</time>" +
-			"			</trkpt>" +
-			"			<trkpt lat=\"47.644548\" lon=\"-122.754567\">" +
-			"				<ele>4.94</ele>" +
-			"				<time>2009-10-17T18:37:31Z</time>" +
-			"			</trkpt>" +
-			"			<trkpt lat=\"47.646554\" lon=\"-122.334262\">" +
-			"				<ele>6.87</ele>" +
-			"				<time>2009-10-17T18:37:34Z</time>" +
-			"			</trkpt>" +
 			"		</trkseg>" +
 			"	</trk>" +
 			"</gpx>"

@@ -42,7 +42,14 @@ export default {
       
       flightPath.setMap(map)
       marker.addListener("click", self.activateModal);
-	  console.log("click", location);
+      console.log("click", location);
+      
+      self.$emit("point-added", {
+          id: Math.random() * 100000,
+          lng: location.lng(),
+          lat: location.lat(),
+          date: new Date() 
+      })
 	}
 
 	function initMap() {
@@ -56,6 +63,13 @@ export default {
 		map: map
 	  });
 	  marker.addListener("click", self.activateModal);
+
+    self.$emit("point-added", {
+          id: Math.random() * 100000,
+          lng: uluru.lng,
+          lat: uluru.lat,
+          date: new Date() 
+      })
 
 flightPlanCoordinates.push(
           new google.maps.LatLng(-25.363, 131.044),

@@ -98,7 +98,7 @@
 <script>
 export default {
   name: "MapModal",
-  props: ["email", "password", "isCardModalActive"],
+  props: ["isCardModalActive", ""],
   methods: {
 	open: function() {
 	  this.isCardModalActive = true;
