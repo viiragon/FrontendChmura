@@ -9,7 +9,6 @@ import auth from '../auth'
 import HelloWorld from "@/components/HelloWorld";
 import StartView from"@/components/StartView";
 import TripListView from "@/components/TripListView";
-import TripList from "@/components/TripList";
 import MapView from "@/components/MapView";
 import EditTrip from "@/components/EditTrip";
 import LoginView from "@/components/LoginView";
@@ -52,13 +51,6 @@ export default new Router({
 		path: "/info",
 		name: "HelloWorld",
 		component: HelloWorld,
-		beforeEnter: ifAuthenticated
-    },
-
-    {
-		path: "/list",
-		name: "TripList",
-		component: TripList,
 		beforeEnter: ifAuthenticated
     },
 
