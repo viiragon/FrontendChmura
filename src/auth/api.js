@@ -8,8 +8,7 @@ const mocks = {
 
 const apiCall = ({url, method, ...args}) => new Promise((resolve, reject) => {
 	setTimeout(() => {
-		try {
-			axios.defaults.headers.common['Authorization'] = "Basic YWRtaW46MTIzNA=="			
+		try {	
 			http.get("trips", function(response) {
 				console.log(response);
 				resolve()

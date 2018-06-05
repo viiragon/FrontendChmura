@@ -189,6 +189,8 @@ import VueInputAutowidth from 'vue-input-autowidth'
 import Buefy from 'buefy'
 import 'buefy/lib/buefy.min.css'
 import 'font-awesome/css/font-awesome.min.css'
+import http from './HttpService';
+import axios from 'axios';
 
 Vue.use(Buefy, {
   defaultIconPack: 'fa',
@@ -267,12 +269,45 @@ export default {
 			));
 		},
 		getTrip(index) {
-			Vue.http.get('https://jsonplaceholder.typicode.com/posts/' + index).then(response => {
-				var trip = JSON.parse(response.bodyText);
-				console.log(trip);
-				this.siteData.tmp = trip;
-				this.siteData.loaded = true;
-			});
+			var site = this;
+			http.get("trips/" + index, function(response) {
+				console.log(response);
+				var waypoints = [];
+				for (var i = 0; i < response.data.waypoints.length; i++) {
+					var point = createWaypoint(
+						response.data.waypoints[i].latitude, 
+						response.data.waypoints[i].longitude,
+						new Date(response.data.waypoints[i].date));
+					point.id = response.data.waypoints[i].waypointId;
+					waypoints.push(point);
+				}
+				var trip = createTrip(
+					response.data.name, 
+					response.data.description, 
+					new Date(response.data.start), 
+					new Date(response.data.end), 
+					waypoints
+				);
+				site.siteData.trip = trip;
+			}, function(error) {
+				console.log(error);	
+				site.readGPSText(
+					`<gpx>
+						<metadata>
+							<name>Wycieczka w Warszawie</name>
+							<desc>Widzieliśmy nawet pałac kultury</desc>
+						</metadata>
+						<trk>
+							<trkseg>
+								<trkpt lat="-25.363" lon="131.044">
+									<ele>0.0</ele>
+									<time>Tue Jun 05 2018 18:04:57 GMT+0200</time>
+								</trkpt>
+							</trkseg>
+						</trk>
+					</gpx>`
+				);
+			})
 		},
 		setDummyTrip() {
 			this.siteData.trip = createTrip(
@@ -444,8 +479,8 @@ export default {
 		}
 	},
 	beforeMount(){
-		this.getTrip(1);
 		this.siteData.trip = createTrip("", "", null, null, []);
+		this.getTrip(this.$route.params.id);
 		/*this.setDummyTrip();
 		this.setRandomWayPoint();
 		this.setRandomWayPoint();
@@ -454,7 +489,7 @@ export default {
 		this.setRandomWayPoint();
 		this.setRandomWayPoint();*/
 		
-		this.readGPSText(
+		/*this.readGPSText(
 			`<gpx>
 				<metadata>
 					<name>Wycieczka w Warszawie</name>
@@ -469,22 +504,7 @@ export default {
 					</trkseg>
 				</trk>
 			</gpx>`
-		/*
-			`<gpx>
-				<metadata>
-					<name>Wycieczka w Warszawie</name>
-					<desc>Widzieliśmy nawet pałac kultury</desc>
-				</metadata>
-				<trk>
-					<trkseg>
-						<trkpt lat=-25.363 lon=131.044>
-							<ele>0.0</ele>
-							<time>Tue Jun 05 2018 18:04:57 GMT+0200</time>
-						</trkpt>
-					</trkseg>
-				</trk>
-			</gpx>`*/
-		);
+		);*/
 		
 		//this.saveGPSFile();
 		//this.getTrip(this.$route.params.id);
