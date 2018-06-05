@@ -1,5 +1,6 @@
 <template>
 	<section class="section">
+		<h2 class="title is-2">Edycja wycieczki</h2>
 		<a id="download" href="data" download="null.txt"></a>
 		<div v-if="siteData.loaded">
 			<!--<h1>{{ siteData.trip.name }}</h1>-->
@@ -43,6 +44,7 @@
 				// v-on:click="saveGPSFile"
 import Vue from 'vue'
 import MapComponent from './MapView';
+import * as HttpService from './HttpService.js';
 
 var formatDate = function(value) {
 	return value.getDate() + "." + (value.getMonth() + 1) + "." + (value.getYear() + 1900); 
@@ -267,6 +269,10 @@ export default {
 			}
 		}
 	},
+	created: function() {
+		console.log("created")
+		HttpService.getTrips();
+	},
 	beforeMount(){
 		/*this.setDummyTrip();
 		this.setRandomWayPoint();
@@ -277,16 +283,41 @@ export default {
 		this.setRandomWayPoint();*/
 		
 		this.readGPSText(	
-			"<gpx>" +
-			"	<metadata>" +
-			"		<name>Wycieczka przez Chęciny</name>" +
-			"		<desc>Zwiedziliśmy multum miejsc w okolicach Chęcin. Byliśmy nawet w zamku!</desc>" +
-			"	</metadata>" +
-			"	<trk>" +
-			"		<trkseg>" +
-			"		</trkseg>" +
-			"	</trk>" +
-			"</gpx>"
+			`<gpx>
+	<metadata>
+		<name>Wycieczka przez Chęciny XXXXXX</name>
+		<desc>Zwiedziliśmy multum miejsc w okolicach Chęcin. Byliśmy nawet w zamku!</desc>
+	</metadata>
+	<trk>
+		<trkseg>
+			<trkpt lat=-25.363 lon=131.044>
+				<ele>0.0</ele>
+				<time>Wed May 30 2018 09:54:55 GMT+0200 (Central European Daylight Time)</time>
+			</trkpt>
+			<trkpt lat=-28.388608294708206 lon=125.89360883855818>
+				<ele>0.0</ele>
+				<time>Wed May 30 2018 09:57:32 GMT+0200 (Central European Daylight Time)</time>
+			</trkpt>
+			<trkpt lat=-28.2183653628497 lon=137.49517133855818>
+				<ele>0.0</ele>
+				<time>Wed May 30 2018 09:58:00 GMT+0200 (Central European Daylight Time)</time>
+			</trkpt>
+			<trkpt lat=-22.422313105308397 lon=141.36235883855818>
+				<ele>0.0</ele>
+				<time>Wed May 30 2018 09:58:01 GMT+0200 (Central European Daylight Time)</time>
+			</trkpt>
+			<trkpt lat=-31.49530267143462 lon=140.48345258855818>
+				<ele>0.0</ele>
+				<time>Wed May 30 2018 09:58:02 GMT+0200 (Central European Daylight Time)</time>
+			</trkpt>
+			<trkpt lat=-23.876908128471 lon=153.49126508855818>
+				<ele>0.0</ele>
+				<time>Wed May 30 2018 09:58:03 GMT+0200 (Central European Daylight Time)</time>
+			</trkpt>
+		</trkseg>
+	</trk>
+</gpx>
+`
 		);
 		
 		//this.saveGPSFile();
