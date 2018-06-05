@@ -16,9 +16,6 @@
 	  <a class="navbar-item" href="/#/">
         Start
       </a>
-      <a class="navbar-item" href="/#/list">
-        List
-      </a>
 	  <a class="navbar-item" href="/#/trips">
         Trips
       </a>
