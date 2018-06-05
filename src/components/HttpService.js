@@ -5,16 +5,16 @@ import axios from 'axios';
 var config = {
     headers: {
         'Access-Control-Allow-Origin': '*',
-        /*'Authorization': 'Basic YWRtaW46MTIzNA==',*/
+        // 'Authorization': 'Basic YWRtaW46MTIzNA==',
         'Accept': 'application/json',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-        'Access-Control-Allow-Headers': 'Authorization',
-        "Content-Type": "application/json",
-    }
-    /*auth: {
+        // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+        // 'Access-Control-Allow-Headers': 'Authorization',
+        // "Content-Type": "application/json",
+    },
+    auth: {
         username: 'user',
         password: '1234'
-    }*/
+    }
 };
 
 export function getTrips() {
