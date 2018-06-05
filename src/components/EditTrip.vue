@@ -3,34 +3,166 @@
 		<a id="download" href="data" download="null.txt"></a>
 		<div v-if="siteData.loaded">
 			<!--<h1>{{ siteData.trip.name }}</h1>-->
-			<b-field>
-				<b-input placeholder="Name" v-model="siteData.trip.name"></b-input>
+			 
+			<!--<b-message> -->	
+				<!--<b-collapse :open="false">
+				<b-button class="button is-primary" slot="trigger">
+				<b-icon icon="pencil"></b-icon>
+				</b-button>-->
+		<section class="hero is-info">
+		<div class="hero-body">
+			
+			<h1 class="title">
+			Title
+			</h1>
+			
 			</b-field>
+				<input 
+				v-autowidth="{maxWidth: '960px', minWidth: '20px', comfortZone: 5}"
+				v-model="siteData.trip.name" />
+			
+		<!--<b-message v-if> 
+		{{siteData.trip.description}}
+				</b-message>-->		
+			
+		
+		</div>
+		</section>
+		<b-field>
+		</b-field>
+		<section class="hero is-primary">
+		<div class="hero-body">
+			
+			<h1 class="title">
+			Description
+			</h1>
+				<textarea class="textarea" 
+				input v-model="siteData.trip.description"
+				/></textarea>
+			
+		
+		</div>
+		</section>
+			
+		
+        <!--</b-collapse>
+		{{ siteData.trip.name }}
+		</b-message>	
+		
 			<!--<input v-model="siteData.trip.name"/>-->
 			<!--<h2>{{ siteData.trip.description }}</h2>-->
-			<b-field>
-				<b-input placeholder="Description" v-model="siteData.trip.description"></b-input>
+			<!--<b-field>
+			<b-message> 
+				<b-collapse :open="false">
+            <b-button class="button is-primary" slot="trigger">
+				<b-icon icon="pencil"></b-icon>
+				</b-button>
+            <div class="notification">
+                <div class="content">
+						
+                        <textarea class="textarea" input v-model="siteData.trip.description"/></textarea>
+						
+                    
+                </div>
+            </div>
+        </b-collapse>
+				{{siteData.trip.description}}
+				</b-message>-->			
+			
+			<!--<b-input placeholder="Description" v-model="siteData.trip.description"></b-input>-->
 			</b-field>
 			<map-component @point-added="addPoint"></map-component>
 			<!--<input v-model="siteData.trip.description"/>-->
 			<b-table
 				:data="siteData.trip.waypoints"
-				:columns="columns"
+				paginated
+				per-page="5"
+				:opened-detailed="defaultOpenedDetails"
+				detailed
+				detail-key="id"
+				@details-open="(row, id) => $toast.open(`Expanded ${row.id}`)"
 				focusable>
-				<button>
-					bbb
-				</button>
+				
+				
+				 <template slot-scope="props">
+				 
+			<b-table-column field="id" label="ID" width="40" numeric: true>
+            {{ props.row.id }}
+			</b-table-column>
+			
+            <b-table-column field="latitude" label="Latitude"  width="40">
+                {{ props.row.latitude }}
+            </b-table-column>
+				
+			<b-table-column field="longitude" label="Longitude" width="40">
+                {{ props.row.longitude }}
+            </b-table-column>
+			
+			<b-table-column field="date" label="Date">
+                {{ props.row.date }}
+            </b-table-column>
+			
+			<!--<b-table-column field="name" label="Name point" centered=true>
+                {{ props.row.name }}
+            </b-table-column>-->
+
+					
+				</template>
+				
+				
+				
+				
+				
+				
+				<template slot="detail" slot-scope="props">
+            <article class="media">
+                <figure class="media-left">
+                    
+                </figure>
+               
+                   
+                        
+                            <div class="buttons">
+
+							<button  @click="addPhoto" class="button is-success">Add Foto</button>
+							<button  @click="removePhoto" class="button is-danger">Remove Foto</button>
+							<button  @click="addVideo" class="button is-success">Add Movie</button>
+							<button  @click="removeVideo" class="button is-danger">Remove Movie</button>
+							
+					
+							<a class="button is-danger is-outlined"	
+							v-on:click="deleteItem(props.row.id)">
+							<span>Delete point</span>
+							<span class="icon is-small">
+							<b-icon icon="close"></b-icon>
+							</span>
+							</a>
+							</tr>
+							</div>
+							
+							
+                   
+               
+            </article>
+        </template>
+    </b-table>
+
+				
 			</b-table>
 			<hr/>
-			<input class="button is-link" v-on:click="saveGPSFile" type="button" value="Save GPS file">
-			<b-upload v-model="files">
-            <a class="button is-link">
+			<input class="button is-link" v-on:click="saveGPSFile" type="button" value="Save GPX file">
+			<b-upload v-model="files" v-on:change="readGPSFile(files[0])">
+            <a class="button is-link" id="files">
                 <b-icon icon="upload"></b-icon>
-					<span>Read GPS file</span>
+					<span>Read GPX file</span>
 				</a>
 			</b-upload>
-			<input class="button is-link" v-on:click="save" type="button" value="Save data">
+			<input class="button is-link" v-on:click="save" type="button" value="Save date">
+			
 			</div>
+					
+			
+			
 		<div v-else>
 			LOADING...
 		</div>
@@ -38,15 +170,35 @@
 </template>
 
 <script>
-			//<input class="button is-link" v-on:click="readGPSFile" type="file" name="Read GPS file"> 
+					//<input class="button is-link" v-on:click="readGPSFile" type="file" name="Read GPS file"> 
 				//:selected.sync="siteData.trip.waypoints[selected]"
 				// v-on:click="saveGPSFile"
 import Vue from 'vue'
 import MapComponent from './MapView';
+import VueInputAutowidth from 'vue-input-autowidth'
+import Buefy from 'buefy'
+import 'buefy/lib/buefy.min.css'
+import 'font-awesome/css/font-awesome.min.css'
+
+
+
+
+
+
+Vue.use(Buefy, {
+  defaultIconPack: 'fa',
+  defaultContainerElement: 'app'
+})
+Vue.use(VueInputAutowidth)
+ 
+
+var nextId = 0;
 
 var formatDate = function(value) {
 	return value.getDate() + "." + (value.getMonth() + 1) + "." + (value.getYear() + 1900); 
 }
+	
+
 	
 export default {
 	name: 'TripList',
@@ -61,6 +213,8 @@ export default {
 		return {
 			siteData,
 			selected: 1,
+			files: [],
+			defaultOpenedDetails: [1],
 			columns: [
 				{
 					field: 'latitude',
@@ -78,7 +232,9 @@ export default {
 					field: 'date',
 					label: 'Date',
 					centered: true,
-					formatter: formatDate
+					dateInputFormat: '"YYYY-MM-DDThh:mm:ss"',
+					dateOutputFormat: 'MMM Do YY '
+					
 				},
 				{
 					field: '',
@@ -89,6 +245,14 @@ export default {
 			]
 		}
 	},
+	watch: {
+		files:function(val,oldval){
+			
+			this.readGPSFile(this.files[0]);
+			}
+			},
+		
+		
 	methods: {
 		addPoint(point) {
 			console.log(point)
@@ -122,11 +286,14 @@ export default {
 				new Date("2017-09-22T06:11:00.000Z"))
 			);
 		},
-		readGPSFile(file) {	
+		readGPSFile(file) 
+		{	
+		console.log(file)
 			try {
 				var reader = new FileReader();
+				var site = this;
 				reader.onload = function (e) {
-					this.readGPSText(e.target.result);
+					site.readGPSText(e.target.result);
 				};
 				reader.readAsText(file);
 				console.log("Loading file: " + file.name);
@@ -224,32 +391,32 @@ export default {
 			console.log("Let's pretend it works OwO");
 		}, 
 		addPhoto(id, photo) {
-			if (id < this.siteDate.trip.waypoints.length) {
-				this.siteDate.trip.waypoints[id].photo = photo;
+			if (id < this.siteData.trip.waypoints.length) {
+				this.siteData.trip.waypoints[id].photo = photo;
 				console.log("Photo added");
 			} else {
 				console.error("ERROR! Waypoint id." + id + " does not exist!");
 			}
 		}, 
 		removePhoto(id) {
-			if (id < this.siteDate.trip.waypoints.length) {
-				this.siteDate.trip.waypoints[id].photo = null;
+			if (id < this.siteData.trip.waypoints.length) {
+				this.siteData.trip.waypoints[id].photo = null;
 				console.log("Photo removed");
 			} else {
 				console.error("ERROR! Waypoint id." + id + " does not exist!");
 			}
 		}, 
 		addVideo(id, video) {			
-			if (id < this.siteDate.trip.waypoints.length) {
-				this.siteDate.trip.waypoints[id].video = video;
+			if (id < this.siteData.trip.waypoints.length) {
+				this.siteData.trip.waypoints[id].video = video;
 				console.log("Video added");
 			} else {
 				console.error("ERROR! Waypoint id." + id + " does not exist!");
 			}
 		}, 
 		removeVideo(id) {
-			if (id < this.siteDate.trip.waypoints.length) {
-				this.siteDate.trip.waypoints[id].video = null;
+			if (id < this.siteData.trip.waypoints.length) {
+				this.siteData.trip.waypoints[id].video = null;
 				console.log("Video removed");
 			} else {
 				console.error("ERROR! Waypoint id." + id + " does not exist!");
@@ -258,13 +425,14 @@ export default {
 		createNewItem() {
 			this.siteData.trip.waypoints.push(createWaypoint(0, 0, new Date()));
 		},
-		deleteItem(id) {					
-			if (id < this.siteDate.trip.waypoints.length) {
-				this.siteDate.trip.waypoints.splice(id, 1);;
-				console.log("Waypoint id." + id + " removed");
-			} else {
-				console.error("ERROR! Waypoint id." + id + " does not exist!");
-			}
+		deleteItem(id) {	
+			console.log(this.siteData.trip.waypoints);
+			for (var update = 0; update<this.siteData.trip.waypoints.length; update++){
+				if (id == this.siteData.trip.waypoints[update].id) {
+					this.siteData.trip.waypoints.splice(update, 1);
+					console.log("Waypoint id." + id + " removed");
+				}
+			} 
 		}
 	},
 	beforeMount(){
@@ -307,6 +475,7 @@ function createTrip(name, description, startDate, endDate, waypoints) {
 
 function createWaypoint(lat, lon, date) {
 	return {
+		id : nextId++,  
 		latitude: lat,
 		longitude: lon,
 		date: date,
