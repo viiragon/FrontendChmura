@@ -180,25 +180,17 @@ import Buefy from 'buefy'
 import 'buefy/lib/buefy.min.css'
 import 'font-awesome/css/font-awesome.min.css'
 
-
-
-
-
-
 Vue.use(Buefy, {
   defaultIconPack: 'fa',
   defaultContainerElement: 'app'
 })
 Vue.use(VueInputAutowidth)
  
-
 var nextId = 0;
 
 var formatDate = function(value) {
 	return value.getDate() + "." + (value.getMonth() + 1) + "." + (value.getYear() + 1900); 
 }
-	
-
 	
 export default {
 	name: 'TripList',
@@ -209,7 +201,6 @@ export default {
 			loaded: true,
 			tmp: {}
 		}
-
 		return {
 			siteData,
 			selected: 1,
@@ -247,15 +238,11 @@ export default {
 	},
 	watch: {
 		files:function(val,oldval){
-			
 			this.readGPSFile(this.files[0]);
-			}
-			},
-		
-		
+		}
+	},		
 	methods: {
 		addPoint(point) {
-			console.log(point)
 			this.siteData.trip.waypoints.push(createWaypoint(
 				point.lat, 
 				point.lng,
@@ -263,11 +250,12 @@ export default {
 			));
 		},
 		getTrip(index) {
-			Vue.http.get('https://jsonplaceholder.typicode.com/posts/' + index).then(response => {
+			var fun = function (response) {
+				console.log(response);				
+			};
+			Vue.http.get('http://104.41.220.226:8080/api/trips').then(response => {
 				var trip = JSON.parse(response.bodyText);
 				console.log(trip);
-				this.siteData.tmp = trip;
-				this.siteData.loaded = true;
 			});
 		},
 		setDummyTrip() {
@@ -286,9 +274,7 @@ export default {
 				new Date("2017-09-22T06:11:00.000Z"))
 			);
 		},
-		readGPSFile(file) 
-		{	
-		console.log(file)
+		readGPSFile(file) {	
 			try {
 				var reader = new FileReader();
 				var site = this;
@@ -363,7 +349,7 @@ export default {
 				var point;
 				for (var i = 0; i < this.siteData.trip.waypoints.length; i++) {
 					point = this.siteData.trip.waypoints[i];
-					output += "\t\t\t<trkpt lat=" + point.latitude + " lon=" + point.longitude + ">\n";
+					output += "\t\t\t<trkpt lat=\"" + point.latitude + "\" lon=\"" + point.longitude + "\">\n";
 					output += "\t\t\t\t<ele>0.0</ele>\n";
 					output += "\t\t\t\t<time>" + point.date + "</time>\n";
 					output += "\t\t\t</trkpt>\n";
@@ -436,6 +422,8 @@ export default {
 		}
 	},
 	beforeMount(){
+		this.getTrip(1);
+		this.siteData.trip = createTrip("", "", null, null, []);
 		/*this.setDummyTrip();
 		this.setRandomWayPoint();
 		this.setRandomWayPoint();
@@ -444,17 +432,36 @@ export default {
 		this.setRandomWayPoint();
 		this.setRandomWayPoint();*/
 		
-		this.readGPSText(	
-			"<gpx>" +
-			"	<metadata>" +
-			"		<name>Wycieczka przez Chęciny</name>" +
-			"		<desc>Zwiedziliśmy multum miejsc w okolicach Chęcin. Byliśmy nawet w zamku!</desc>" +
-			"	</metadata>" +
-			"	<trk>" +
-			"		<trkseg>" +
-			"		</trkseg>" +
-			"	</trk>" +
-			"</gpx>"
+		this.readGPSText(
+			`<gpx>
+				<metadata>
+					<name>Wycieczka w Warszawie</name>
+					<desc>Widzieliśmy nawet pałac kultury</desc>
+				</metadata>
+				<trk>
+					<trkseg>
+						<trkpt lat="-25.363" lon="131.044">
+							<ele>0.0</ele>
+							<time>Tue Jun 05 2018 18:04:57 GMT+0200</time>
+						</trkpt>
+					</trkseg>
+				</trk>
+			</gpx>`
+		/*
+			`<gpx>
+				<metadata>
+					<name>Wycieczka w Warszawie</name>
+					<desc>Widzieliśmy nawet pałac kultury</desc>
+				</metadata>
+				<trk>
+					<trkseg>
+						<trkpt lat=-25.363 lon=131.044>
+							<ele>0.0</ele>
+							<time>Tue Jun 05 2018 18:04:57 GMT+0200</time>
+						</trkpt>
+					</trkseg>
+				</trk>
+			</gpx>`*/
 		);
 		
 		//this.saveGPSFile();
