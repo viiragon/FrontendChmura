@@ -29,8 +29,9 @@ export function getTrips() {
 }
 
 /*
-responseFunction: function(response) {...}
-errorFunction: function(error) {...}
+	url - skrócone
+	responseFunction: function(response) {...}
+	errorFunction: function(error) {...}
 */
 export default {
 	get: function(url, responseFunction, errorFunction) {

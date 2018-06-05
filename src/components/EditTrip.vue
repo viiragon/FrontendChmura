@@ -5,10 +5,10 @@
 			<!--<h1>{{ siteData.trip.name }}</h1>-->
 			 
 			<!--<b-message> -->	
-				<!--<b-collapse :open="false">
-				<b-button class="button is-primary" slot="trigger">
-				<b-icon icon="pencil"></b-icon>
-				</b-button>-->
+			<!--<b-collapse :open="false">
+			<b-button class="button is-primary" slot="trigger">
+			<b-icon icon="pencil"></b-icon>
+			</b-button>-->
 		<section class="hero is-info">
 		<div class="hero-body">
 			
@@ -16,11 +16,19 @@
 			Title
 			</h1>
 			
-			</b-field>
+			
 				<input 
 				v-autowidth="{maxWidth: '960px', minWidth: '20px', comfortZone: 5}"
 				v-model="siteData.trip.name" />
-			
+			<b-field>
+			</b-field>
+			<h1 class="title">
+			Description
+			</h1>
+				<textarea class="textarea" 
+				input v-model="siteData.trip.description"
+				/></textarea>
+				
 		<!--<b-message v-if> 
 		{{siteData.trip.description}}
 				</b-message>-->		
@@ -30,10 +38,10 @@
 		</section>
 		<b-field>
 		</b-field>
-		<section class="hero is-primary">
-		<div class="hero-body">
+		<!--<section class="hero is-primary">
+		<div class="hero-body">-->
 			
-			<h1 class="title">
+		<!--	<h1 class="title">
 			Description
 			</h1>
 				<textarea class="textarea" 
@@ -41,8 +49,8 @@
 				/></textarea>
 			
 		
-		</div>
-		</section>
+		<!--</div>
+		</section>-->
 			
 		
         <!--</b-collapse>
@@ -80,25 +88,24 @@
 				:opened-detailed="defaultOpenedDetails"
 				detailed
 				detail-key="id"
-				@details-open="(row, id) => $toast.open(`Expanded ${row.id}`)"
 				focusable>
 				
 				
 				 <template slot-scope="props">
 				 
-			<b-table-column field="id" label="ID" width="40" numeric: true>
+			<!--<b-table-column field="id" label="ID" width="40" numeric: true>
             {{ props.row.id }}
-			</b-table-column>
+			</b-table-column>-->
 			
-            <b-table-column field="latitude" label="Latitude"  width="40">
+            <b-table-column field="latitude" label="Latitude"   sortable centered>
                 {{ props.row.latitude }}
             </b-table-column>
 				
-			<b-table-column field="longitude" label="Longitude" width="40">
+			<b-table-column field="longitude" label="Longitude"  sortable centered>
                 {{ props.row.longitude }}
             </b-table-column>
 			
-			<b-table-column field="date" label="Date">
+			<b-table-column field="date" label="Date" sortable centered>
                 {{ props.row.date }}
             </b-table-column>
 			
@@ -109,25 +116,28 @@
 					
 				</template>
 				
-				
-				
-				
-				
-				
+				 
 				<template slot="detail" slot-scope="props">
             <article class="media">
                 <figure class="media-left">
-                    
+                    <p class="image is-128x128">
+                        <img src="https://www.sydney.com/sites/sydney/files/styles/gallery_full_width/public/2017-12/Jacarandas%20in%20Spring%20bloom%2C%20Royal%20Botanic%20Garden%2C%20Sydney.jpg?itok=zpohBz_j">
+                    </p>
                 </figure>
                
                    
-                        
+                      	
                             <div class="buttons">
-
-							<button  @click="addPhoto" class="button is-success">Add Foto</button>
-							<button  @click="removePhoto" class="button is-danger">Remove Foto</button>
-							<button  @click="addVideo" class="button is-success">Add Movie</button>
-							<button  @click="removeVideo" class="button is-danger">Remove Movie</button>
+							<b-upload v-model="photos" v-on:change="addPhoto(photos[0])">
+							<a class="button is-success" id="photos">
+							<b-icon icon="upload"></b-icon>
+							<span>Add Photo</span>
+							</a>
+							</b-upload>
+							<!--<button  @click="addPhoto" class="button is-success">Add Photo</button>-->
+							<button  @click="removePhoto" class="button is-danger">Remove Photo</button>
+							<!--<button  @click="addVideo" class="button is-success">Add Movie</button>
+							<button  @click="removeVideo" class="button is-danger">Remove Movie</button>-->
 							
 					
 							<a class="button is-danger is-outlined"	
@@ -157,7 +167,7 @@
 					<span>Read GPX file</span>
 				</a>
 			</b-upload>
-			<input class="button is-link" v-on:click="save" type="button" value="Save date">
+			<input class="button is-link" v-on:click="save" type="button" value="Save data">
 			
 			</div>
 					
@@ -191,21 +201,24 @@ var nextId = 0;
 var formatDate = function(value) {
 	return value.getDate() + "." + (value.getMonth() + 1) + "." + (value.getYear() + 1900); 
 }
-	
+		
 export default {
 	name: 'TripList',
-	components: { 'map-component': MapComponent },
+	components: { 'map-component': MapComponent
+				},
 	data() {
 		const siteData = {
 			trip: {},
 			loaded: true,
 			tmp: {}
 		}
+
 		return {
 			siteData,
 			selected: 1,
 			files: [],
-			defaultOpenedDetails: [1],
+			photos: [],
+			defaultOpenedDetails: [],
 			columns: [
 				{
 					field: 'latitude',
@@ -238,11 +251,15 @@ export default {
 	},
 	watch: {
 		files:function(val,oldval){
+			
 			this.readGPSFile(this.files[0]);
-		}
-	},		
+			}
+			},
+		
+		
 	methods: {
 		addPoint(point) {
+			console.log(point)
 			this.siteData.trip.waypoints.push(createWaypoint(
 				point.lat, 
 				point.lng,
@@ -250,12 +267,11 @@ export default {
 			));
 		},
 		getTrip(index) {
-			var fun = function (response) {
-				console.log(response);				
-			};
-			Vue.http.get('http://104.41.220.226:8080/api/trips').then(response => {
+			Vue.http.get('https://jsonplaceholder.typicode.com/posts/' + index).then(response => {
 				var trip = JSON.parse(response.bodyText);
 				console.log(trip);
+				this.siteData.tmp = trip;
+				this.siteData.loaded = true;
 			});
 		},
 		setDummyTrip() {
@@ -364,7 +380,7 @@ export default {
 				var blob = new Blob([output], {type:'text/plain'});
 				a.href = window.URL.createObjectURL(blob);
 				var cleanName = this.siteData.trip.name.replace(/ /g, '_').replace(/[^\w\s]/gi, '');
-				a.download = cleanName + ".gps";
+				a.download = cleanName + ".gpx";
 				a.click();
 				a.href = "";
 				console.log("Saved file: " + cleanName + ".gps");
@@ -376,36 +392,42 @@ export default {
 		save() {
 			console.log("Let's pretend it works OwO");
 		}, 
-		addPhoto(id, photo) {
-			if (id < this.siteData.trip.waypoints.length) {
-				this.siteData.trip.waypoints[id].photo = photo;
+		addPhoto(id,photo) {
+			console.log("test");
+			for (var update = 0; update<this.siteData.trip.waypoints.length; update++)
+			{
+			if (id == this.siteData.trip.waypoints[update].id) {
+				this.siteData.trip.waypoints[update].photo = photo;
 				console.log("Photo added");
-			} else {
-				console.error("ERROR! Waypoint id." + id + " does not exist!");
+			} 
 			}
 		}, 
+		
 		removePhoto(id) {
-			if (id < this.siteData.trip.waypoints.length) {
-				this.siteData.trip.waypoints[id].photo = null;
+			for (var update = 0; update<this.siteData.trip.waypoints.length; update++)
+			{
+			if (id == this.siteData.trip.waypoints[update].id) {
+				this.siteData.trip.waypoints[update].photo = null;
 				console.log("Photo removed");
-			} else {
-				console.error("ERROR! Waypoint id." + id + " does not exist!");
+			} 
 			}
 		}, 
-		addVideo(id, video) {			
-			if (id < this.siteData.trip.waypoints.length) {
-				this.siteData.trip.waypoints[id].video = video;
+		addVideo(id, video) {
+			for (var update = 0; update<this.siteData.trip.waypoints.length; update++)
+			{		
+			if (id == id == this.siteData.trip.waypoints[update].id) {
+				this.siteData.trip.waypoints[update].video = video;
 				console.log("Video added");
-			} else {
-				console.error("ERROR! Waypoint id." + id + " does not exist!");
+			} 
 			}
 		}, 
 		removeVideo(id) {
-			if (id < this.siteData.trip.waypoints.length) {
-				this.siteData.trip.waypoints[id].video = null;
+			for (var update = 0; update<this.siteData.trip.waypoints.length; update++)
+			{	
+			if (id == this.siteData.trip.waypoints[update].id) {
+				this.siteData.trip.waypoints[update].video = null;
 				console.log("Video removed");
-			} else {
-				console.error("ERROR! Waypoint id." + id + " does not exist!");
+			} 
 			}
 		}, 
 		createNewItem() {
