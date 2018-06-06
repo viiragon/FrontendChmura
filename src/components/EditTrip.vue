@@ -79,7 +79,7 @@
 			
 			<!--<b-input placeholder="Description" v-model="siteData.trip.description"></b-input>-->
 			</b-field>
-			<map-component @point-added="addPoint"></map-component>
+			<map-component @point-added="addPoint" trip-id="bdf17206-578f-4556-ba33-e788c8567d22"></map-component>
 			<!--<input v-model="siteData.trip.description"/>-->
 			<b-table
 				:data="siteData.trip.waypoints"
@@ -193,27 +193,34 @@ import http from './HttpService';
 import axios from 'axios';
 
 Vue.use(Buefy, {
-  defaultIconPack: 'fa',
-  defaultContainerElement: 'app'
-})
-Vue.use(VueInputAutowidth)
- 
+  defaultIconPack: "fa",
+  defaultContainerElement: "app"
+});
+Vue.use(VueInputAutowidth);
+
 var nextId = 0;
 
 var formatDate = function(value) {
-	return value.getDate() + "." + (value.getMonth() + 1) + "." + (value.getYear() + 1900); 
-}
-		
+  return (
+    value.getDate() +
+    "." +
+    (value.getMonth() + 1) +
+    "." +
+    (value.getYear() + 1900)
+  );
+};
+
 export default {
-	name: 'TripList',
-	components: { 'map-component': MapComponent
-				},
-	data() {
-		const siteData = {
-			trip: {},
-			loaded: true,
-			tmp: {}
-		}
+  name: "TripList",
+  components: {
+    "map-component": MapComponent
+  },
+  data() {
+    const siteData = {
+      trip: {},
+      loaded: true,
+      tmp: {}
+    };
 
 		return {
 			siteData,
@@ -270,7 +277,8 @@ export default {
 		},
 		getTrip(index) {
 			var site = this;
-			http.get("trips/" + index, function(response) {
+			http.get("trips/" + index)
+				.then((response) => {
 				console.log(response);
 				var waypoints = [];
 				for (var i = 0; i < response.data.waypoints.length; i++) {
@@ -289,7 +297,7 @@ export default {
 					waypoints
 				);
 				site.siteData.trip = trip;
-			}, function(error) {
+			}).catch(error => {
 				console.log(error);	
 				site.readGPSText(
 					`<gpx>
@@ -307,7 +315,7 @@ export default {
 						</trk>
 					</gpx>`
 				);
-			})
+			});
 		},
 		setDummyTrip() {
 			this.siteData.trip = createTrip(
@@ -513,43 +521,43 @@ export default {
 }
 
 function createTrip(name, description, startDate, endDate, waypoints) {
-	return {
-		name: name,
-		description: description,
-		start: startDate,
-		end: endDate,
-		waypoints: waypoints
-	};
+  return {
+    name: name,
+    description: description,
+    start: startDate,
+    end: endDate,
+    waypoints: waypoints
+  };
 }
 
 function createWaypoint(lat, lon, date) {
-	return {
-		id : nextId++,  
-		latitude: lat,
-		longitude: lon,
-		date: date,
-		photo: null,
-		video: null
-	};
+  return {
+    id: nextId++,
+    latitude: lat,
+    longitude: lon,
+    date: date,
+    photo: null,
+    video: null
+  };
 }
 
 function findInXML(collection, name) {
-	for (var i = 0; i < collection.length; i++) {
-		if (collection[i].nodeName == name) {
-			return collection[i];
-		}
-	}
-	return null;
+  for (var i = 0; i < collection.length; i++) {
+    if (collection[i].nodeName == name) {
+      return collection[i];
+    }
+  }
+  return null;
 }
 
 function findAllInXML(collection, name) {
-	var list = [];
-	for (var i = 0; i < collection.length; i++) {
-		if (collection[i].nodeName == name) {
-			list.push(collection[i]);
-		}
-	}
-	return list;
+  var list = [];
+  for (var i = 0; i < collection.length; i++) {
+    if (collection[i].nodeName == name) {
+      list.push(collection[i]);
+    }
+  }
+  return list;
 }
 </script>
 

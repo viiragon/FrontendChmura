@@ -34,28 +34,24 @@ export function getTrips() {
 	errorFunction: function(error) {...}
 */
 export default {
-	get: function(url, responseFunction, errorFunction) {
-		axios
-		.get("http://104.41.220.226:8080/api/" + url, config)
-		.then(responseFunction)
-		.catch(errorFunction);
+	get: function(url) {
+		return axios
+        .get("http://104.41.220.226:8080/api/" + url, config)
+        .then(data => data.data);
 	},
 	delete: function(url, responseFunction, errorFunction) {
-		axios
+		return axios
 		.delete("http://104.41.220.226:8080/api/" + url, config)
-		.then(responseFunction)
-		.catch(errorFunction);
+		.then(data => data.data);
 	},
-	post: function(url, data, responseFunction, errorFunction) {
-		axios
-		.post("http://104.41.220.226:8080/api/" + url, data, config)
-		.then(responseFunction)
-		.catch(errorFunction);
+	post: function(url, data) {
+		return axios
+        .post("http://104.41.220.226:8080/api/" + url, data, config)
+        .then(data => data.data);
 	},
 	put: function(url, data, responseFunction, errorFunction) {
-		axios
+		return axios
 		.put("http://104.41.220.226:8080/api/" + url, data, config)
-		.then(responseFunction)
-		.catch(errorFunction);
+		.then(data => data.data);
 	},
 }
