@@ -40,7 +40,7 @@ export default {
       });
 
       this.map.addListener("click", event => {
-        http.post(`trips/${this.tripId}/waypoints`, {
+        http.post(`trips/${self.tripId}/waypoints`, {
           date: new Date(),
           latitude: event.latLng.lat(),
           longitude: event.latLng.lng()
@@ -49,7 +49,7 @@ export default {
         self.placeMarker(event.latLng, this.map);
       });
 
-      http.get(`trips/${self.tripId}`).then(data => {
+      http.get(`trips/bdf17206-578f-4556-ba33-e788c8567d22`).then(data => {
         data.waypoints.forEach(waypoint => {
           var marker = self.placeMarker(new google.maps.LatLng({
             lat: waypoint.latitude,

@@ -52,8 +52,8 @@
 		},
 		mounted () {
 			var vm = this;
-			http.get("trips").then((response) => {
-				vm.trips = response.data.content;
+			http.get("trips").then((data) => {
+				vm.trips = data.content;
 			}).catch((error) => {
 				console.log("error: " + error);
 			});

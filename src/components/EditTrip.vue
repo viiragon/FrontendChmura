@@ -278,22 +278,22 @@ export default {
 		getTrip(index) {
 			var site = this;
 			http.get("trips/" + index)
-				.then((response) => {
-				console.log(response);
+				.then((data) => {
+				console.log(data);
 				var waypoints = [];
-				for (var i = 0; i < response.data.waypoints.length; i++) {
+				for (var i = 0; i < data.waypoints.length; i++) {
 					var point = createWaypoint(
-						response.data.waypoints[i].latitude, 
-						response.data.waypoints[i].longitude,
-						new Date(response.data.waypoints[i].date));
-					point.id = response.data.waypoints[i].waypointId;
+						data.waypoints[i].latitude, 
+						data.waypoints[i].longitude,
+						new Date(data.waypoints[i].date));
+					point.id = data.waypoints[i].waypointId;
 					waypoints.push(point);
 				}
 				var trip = createTrip(
-					response.data.name, 
-					response.data.description, 
-					new Date(response.data.start), 
-					new Date(response.data.end), 
+					data.name, 
+					data.description, 
+					new Date(data.start), 
+					new Date(data.end), 
 					waypoints
 				);
 				site.siteData.trip = trip;
