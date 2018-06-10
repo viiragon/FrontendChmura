@@ -1,21 +1,23 @@
-
-
 import axios from 'axios';
 
-var config = {
-    headers: {
-        'Access-Control-Allow-Origin': '*',
-        // 'Authorization': 'Basic YWRtaW46MTIzNA==',
-        'Accept': 'application/json',
-        // 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-        // 'Access-Control-Allow-Headers': 'Authorization',
-        // "Content-Type": "application/json",
-    },
-    auth: {
-        username: 'user',
-        password: '1234'
-    }
-};
+var mainUrl = "http://104.41.220.226:8080/api/";
+
+function getConfig() { 
+	return {
+		headers: {
+			'Access-Control-Allow-Origin': '*',
+			// 'Authorization': 'Basic YWRtaW46MTIzNA==',
+			'Accept': 'application/json',
+			// 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+			// 'Access-Control-Allow-Headers': 'Authorization',
+			// "Content-Type": "application/json",
+		},
+		auth: {
+			username: localStorage.getItem('user') || '',
+			password: localStorage.getItem('password') || ''
+		}
+	};
+}
 
 export function getTrips() {
   axios
@@ -36,22 +38,22 @@ export function getTrips() {
 export default {
 	get: function(url) {
 		return axios
-        .get("http://104.41.220.226:8080/api/" + url, config)
+        .get(mainUrl + url, getConfig())
         .then(data => data.data);
 	},
-	delete: function(url, responseFunction, errorFunction) {
+	delete: function(url) {
 		return axios
-		.delete("http://104.41.220.226:8080/api/" + url, config)
+		.delete(mainUrl + url, getConfig())
 		.then(data => data.data);
 	},
 	post: function(url, data) {
 		return axios
-        .post("http://104.41.220.226:8080/api/" + url, data, config)
+        .post(mainUrl + url, data, getConfig())
         .then(data => data.data);
 	},
-	put: function(url, data, responseFunction, errorFunction) {
+	put: function(url, data) {
 		return axios
-		.put("http://104.41.220.226:8080/api/" + url, data, config)
+		.put(mainUrl + url, data, getConfig())
 		.then(data => data.data);
 	},
 }

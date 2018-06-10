@@ -7,7 +7,7 @@
 				<b-input required placeholder="User name" v-model="username"></b-input>
 			</b-field>	
 			<b-field>
-				<b-input required placeholder="Password" v-model="password" type="password"></b-input>
+				<b-input required placeholder="Password" v-model="password" type="password" password-reveal></b-input>
 			</b-field>
 			<hr/>
 			<input class="button is-link" type="submit" value="Login">
@@ -32,7 +32,22 @@
 				const { username, password } = this
 				auth.dispatch(AUTH_REQUEST, { username, password }).then(() => {
 					this.$router.push('/');
-				})
+				}).catch((err) => {
+					var messageText;
+					if (err == 401) {
+						messageText = `Username or password is incorrect`;
+					} else if (err == 404) {
+						messageText = `Site cannot connect with the authorisation server. Please try again`;
+					} else {
+						messageText = `Unknown error occured. Please try again`;
+					}
+					this.$toast.open({
+						duration: 5000,
+						message: messageText,
+						type: 'is-danger'
+					});
+					console.log(err);
+				});
 			}
 		},
 	}	
