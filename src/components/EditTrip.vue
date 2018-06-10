@@ -82,8 +82,8 @@
 					</figure>    
 							
 						<div class="buttons">
-							<b-upload v-model="photos" v-on:change="addPhoto(photos[0])">
-								<a class="button is-success" id="photos">
+							<b-upload v-model="photos">
+								<a class="button is-success" v-on:click="setTmpPoint(props.row.id)" id="photos">
 									<b-icon icon="upload"></b-icon>
 									<span>Add Photo</span>
 								</a>
@@ -106,7 +106,7 @@
     	</b-table>
 		
 		<input class="button is-link" v-on:click="saveGPSFile" type="button" value="Save GPX file">
-		<b-upload v-model="files" v-on:change="readGPSFile(files[0])">
+		<b-upload v-model="files">
 			<a class="button is-link" id="files">
 				<b-icon icon="upload"></b-icon>
 				<span>Read GPX file</span>
@@ -149,9 +149,9 @@ export default {
 			siteData:{
 				trip: {},
 				loaded: true,
-				tmp: {}
+				tmp: {},
+				tmpPointId: null
 			},
-			selected: 1,
 			files: [],
 			photos: [],
 			defaultOpenedDetails: [],
@@ -185,19 +185,30 @@ export default {
 		}
 	},
 	beforeMount(){
-		this.siteData.trip = DataService.createTrip("", "", null, null, []);
+		this.siteData.trip = DataService.createTrip(this.$route.params.id, "", "", null, null, []);
 		DataService.getTrip(this.$route.params.id)
 			.then(trip => this.siteData.trip = trip);
 	},
 	watch: {
 		files:function(val,oldval){
 			this.readGPSFile(this.files[0]);
+		},
+		photos:function(val,oldval){
+			console.log(val);
+			this.addPhoto(this.siteData.tmpPointId, this.photos[0]);
 		}
 	},
 	methods: {
+		setTmpPoint(id) {
+			this.siteData.tmpPointId = id;
+		},
 		readGPSFile(file) {
 			GPXService.readGPSFile(file)
-				.then(trip => this.siteData.trip = trip);
+				.then(trip => {
+					var id = this.siteData.trip.id;
+					this.siteData.trip = trip;
+					trip.id = id;
+				});
 		},
 		saveGPSFile() {
 			GPXService.saveGPSFile(this.siteData);

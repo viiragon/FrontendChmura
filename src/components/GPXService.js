@@ -84,6 +84,7 @@ export default {
                     }
                 }
                 var trip = DataService.createTrip(
+					"",
                     name,
                     description,
                     new Date(startDate),
