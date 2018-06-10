@@ -8,29 +8,31 @@
 			<b-field>
 				<b-input required placeholder="Name" v-model="siteData.trip.name"></b-input>
 			</b-field>
-			<h1 class="title">
-				Description
-			</h1>
-			<textarea class="textarea" input v-model="siteData.trip.description"/>
-			</textarea>
+				<h1 class="title">
+					Description
+				</h1>
+				<textarea class="textarea" input v-model="siteData.trip.description"/>
+				</textarea>
 			<b-field></b-field>
-			
-					<h1 class="title">
+				<h1 class="title">
 						Start of trip
 					</h1>
-					<b-datepicker v-model="siteData.trip.startDate" placeholder="Select end date" :first-day-of-week="1"></b-datepicker>
-					<b-timepicker v-model="siteData.trip.startDate" placeholder="Select start time"></b-timepicker>
-					
+					<nav class="level">
+								<div class="level-left">
+									<b-datepicker v-model="siteData.trip.startDate" placeholder="Select start date" :first-day-of-week="1"></b-datepicker>
+									<b-timepicker v-model="siteData.trip.startDate" placeholder="Select start time"></b-timepicker>
+								</div>
+					</nav>
 			<b-field></b-field>
-			<h1 class="title">
-				End of trip
-			</h1>
-			<b-datepicker v-model="siteData.trip.endDate" placeholder="Select end date" :first-day-of-week="1"></b-datepicker>
-			<b-timepicker v-model="siteData.trip.endDate" placeholder="Select end time"></b-timepicker>
-			
-			
-			
-			
+					<h1 class="title">
+						End of trip
+					</h1>
+					<nav class="level">
+								<div class="level-left">
+									<b-datepicker v-model="siteData.trip.endDate" placeholder="Select end date" :min-date="siteData.trip.startDate" :first-day-of-week="1"></b-datepicker>
+									<b-timepicker v-model="siteData.trip.endDate" placeholder="Select end time" ></b-timepicker>
+								</div>
+					</nav>
 			<map-component @point-added="addWaypoint" 
 				@add-photo="add-photo"
 				@remove-photo="removePhoto"
@@ -48,29 +50,29 @@
 				focusable>
 
 			<template slot-scope="props">
-			
-				<!--<b-table-column field="id" label="ID" width="40" numeric: true>
-				{{ props.row.id }}
-				</b-table-column>-->
+		
 				
-				<b-table-column field="latitude" label="Latitude"   sortable centered>
+				<b-table-column field="latitude" label="Latitude"   centered>
 					{{ props.row.latitude }}
 				</b-table-column>
 					
-				<b-table-column field="longitude" label="Longitude"  sortable centered>
+				<b-table-column field="longitude" label="Longitude"  centered>
 					{{ props.row.longitude }}
 				</b-table-column>
 				
 				<b-table-column field="date" label="Date" sortable centered>
-						{{ new Date(props.row.date).toLocaleString()}}
-						<b-datepicker v-model="props.row.date" placeholder="Select Date" :first-day-of-week="1"></b-datepicker>
-						<b-timepicker v-model="props.row.date" placeholder="Select Time"></b-timepicker>
+						
+					<b-collapse :open="false">
+						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(props.row.date).toLocaleString()}}<p></p><b-icon icon="pencil" size="is-small"></b-icon></button>
+							<nav class="level">
+								<div class="level-item">
+									<b-datepicker v-model="props.row.date" placeholder="Select Date" :first-day-of-week="1"></b-datepicker>
+									<b-timepicker v-model="props.row.date" placeholder="Select Time" ></b-timepicker></p>
+								</div>
+							</nav>
+					</b-collapse>
 				</b-table-column>
 				
-				<!--<b-table-column field="name" label="Name point" centered=true>
-					{{ props.row.name }}
-				</b-table-column>-->
-
 			</template>
 			
 			<template slot="detail" slot-scope="props">
@@ -155,33 +157,6 @@ export default {
 			files: [],
 			photos: [],
 			defaultOpenedDetails: [],
-			columns: [
-				{
-					field: 'latitude',
-					label: 'Latitude',
-					width: '40',
-					numeric: true
-				},
-				{
-					field: 'longitude',
-					label: 'Longitude',
-					width: '40',
-					numeric: true
-				},
-				{
-					field: 'date',
-					label: 'Date',
-					centered: true,
-					dateInputFormat: '"YYYY-MM-DDThh:mm:ss"',
-					dateOutputFormat: 'MMM Do YY '
-				},
-				{
-					field: '',
-					label: 'Option',
-					centered: true,
-					formatter: formatDate
-				}
-			]
 		}
 	},
 	beforeMount(){
@@ -192,7 +167,7 @@ export default {
 	watch: {
 		files:function(val,oldval){
 			this.readGPSFile(this.files[0]);
-		}
+			}
 	},
 	methods: {
 		readGPSFile(file) {
