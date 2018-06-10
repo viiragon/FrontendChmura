@@ -15,11 +15,11 @@
 				</b-table-column>
 
 				<b-table-column field="start" label="Start" width="250" centered>
-					{{ new Date(props.row.start).toLocaleDateString()}}
+					{{ new Date(props.row.start).toLocaleString()}}
 				</b-table-column>
 
 				<b-table-column field="end" label="End" width="250" centered>
-					{{ new Date(props.row.end).toLocaleDateString()}}
+					{{ new Date(props.row.end).toLocaleString()}}
 				</b-table-column>
 			</template>
 		</b-table>

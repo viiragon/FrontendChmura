@@ -9,17 +9,19 @@
 			<b-button class="button is-primary" slot="trigger">
 			<b-icon icon="pencil"></b-icon>
 			</b-button>-->
-		<section class="hero is-info">
-		<div class="hero-body">
+		<!--<section class="hero is-info">
+		<div class="hero-body">-->
 			
 			<h1 class="title">
 			Title
 			</h1>
+			<b-field>
+				<b-input required placeholder="Name" v-model="siteData.trip.name"></b-input>
+			</b-field>
 			
-			
-				<input 
+				<!--<input 
 				v-autowidth="{maxWidth: '960px', minWidth: '20px', comfortZone: 5}"
-				v-model="siteData.trip.name" />
+				v-model="siteData.trip.name" />-->
 			<b-field>
 			</b-field>
 			<h1 class="title">
@@ -34,8 +36,8 @@
 				</b-message>-->		
 			
 		
-		</div>
-		</section>
+		<!--</div>
+		</section>-->
 		<b-field>
 		</b-field>
 		<!--<section class="hero is-primary">
@@ -106,7 +108,7 @@
             </b-table-column>
 			
 			<b-table-column field="date" label="Date" sortable centered>
-                {{ props.row.date }}
+                {{ new Date(props.row.date).toLocaleString() }}
             </b-table-column>
 			
 			<!--<b-table-column field="name" label="Name point" centered=true>
@@ -166,12 +168,11 @@
                 <b-icon icon="upload"></b-icon>
 					<span>Read GPX file</span>
 				</a>
-			</b-upload>
-			<input class="button is-link" v-on:click="save" type="button" value="Save data">
+			</b-upload>			
+			<input class="button is-link" v-on:click="showPoster" type="button" value="Show Poster">
+			<!--<input class="button is-link" v-on:click="save" type="button" value="Save data">-->
 			
 			</div>
-					
-			
 			
 		<div v-else>
 			LOADING...
@@ -180,6 +181,7 @@
 </template>
 
 <script>
+//http://www.tapeciarnia.pl/tapety/normalne/127513_kaczka_kot_trawa.jpg
 					//<input class="button is-link" v-on:click="readGPSFile" type="file" name="Read GPS file"> 
 				//:selected.sync="siteData.trip.waypoints[selected]"
 				// v-on:click="saveGPSFile"
@@ -190,7 +192,6 @@ import Buefy from 'buefy'
 import 'buefy/lib/buefy.min.css'
 import 'font-awesome/css/font-awesome.min.css'
 import http from './HttpService';
-import axios from 'axios';
 
 Vue.use(Buefy, {
   defaultIconPack: 'fa',
@@ -427,6 +428,9 @@ export default {
 		save() {
 			console.log("Let's pretend it works OwO");
 		}, 
+		showPoster() {
+			
+		},
 		addPhoto(id,photo) {
 			console.log("test");
 			for (var update = 0; update<this.siteData.trip.waypoints.length; update++)
