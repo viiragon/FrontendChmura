@@ -1,7 +1,7 @@
 <template>
   <section class="section">
-	<h1 class="title">Mapa</h1>
-	<div id="map"></div>
+    <h1 class="title">Mapa</h1>
+    <div id="map"></div>
     
         <b-modal :active.sync="isCardModalActive" :width="640" scroll="keep">
             <map-modal :isCardModalActive.sync="isCardModalActive" :waypoint="clickedWaypoint" has-modal-card>
@@ -20,7 +20,7 @@ export default {
   components: {
     "map-modal": MapModal
   },
-  props: ["tripId"],
+  props: ["tripId", "waypoints"],
   data() {
     return {
       isCardModalActive: false,
@@ -82,7 +82,7 @@ export default {
       this.isCardModalActive = true;
     },
     placeMarker: function(location, map) {
-      var marker = new google.maps.Marker({
+       return new google.maps.Marker({
         position: location,
         map: map
       });

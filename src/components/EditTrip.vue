@@ -21,7 +21,12 @@
 			</div>
 		</section>
 			
-		<map-component @point-added="addPoint" trip-id="bdf17206-578f-4556-ba33-e788c8567d22"></map-component>
+		<map-component @point-added="addWaypoint" 
+			@add-photo="add-photo"
+			@remove-photo="removePhoto"
+			@remove-point="removePoint"
+			:trip-id="siteData.trip.tripId"
+			:waypoints="siteData.trip.waypoints"></map-component>
 
 		<b-table
 			:data="siteData.trip.waypoints"
@@ -76,7 +81,7 @@
 							<button  @click="removeVideo" class="button is-danger">Remove Movie</button>-->
 
 							<a class="button is-danger is-outlined"	
-								v-on:click="deleteItem(props.row.id)">
+								v-on:click="deleteWaypoint(props.row.id)">
 								<span>Delete point</span>
 								<span class="icon is-small">
 									<b-icon icon="close"></b-icon>
@@ -184,13 +189,22 @@ export default {
 		saveGPSFile() {
 			GPXService.saveGPSFile(this.siteData);
 		},
-		addPoint(point) {
+		addWaypoint(point) {
 			console.log(point)
 			this.siteData.trip.waypoints.push(DataService.createWaypoint(
 				point.lat, 
 				point.lng,
 				point.date
 			));
+		},
+		deleteWaypoint(id) {	
+			console.log(this.siteData.trip.waypoints);
+			for (var update = 0; update<this.siteData.trip.waypoints.length; update++){
+				if (id == this.siteData.trip.waypoints[update].id) {
+					this.siteData.trip.waypoints.splice(update, 1);
+					console.log("Waypoint id." + id + " removed");
+				}
+			} 
 		},
 		save() {
 			console.log("Let's pretend it works OwO");
@@ -232,15 +246,6 @@ export default {
 				console.log("Video removed");
 			} 
 			}
-		},
-		deleteItem(id) {	
-			console.log(this.siteData.trip.waypoints);
-			for (var update = 0; update<this.siteData.trip.waypoints.length; update++){
-				if (id == this.siteData.trip.waypoints[update].id) {
-					this.siteData.trip.waypoints.splice(update, 1);
-					console.log("Waypoint id." + id + " removed");
-				}
-			} 
 		}
 	}
 }

@@ -19,9 +19,6 @@
 	  <a class="navbar-item" href="/#/trips">
         Trips
       </a>
-      <a class="navbar-item" href="/#/trip/1">
-        Trip
-      </a>
       <a class="navbar-item" href="/#/map">
         Map
       </a>
