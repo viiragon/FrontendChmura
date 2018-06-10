@@ -8,31 +8,37 @@
 			<b-field>
 				<b-input required placeholder="Name" v-model="siteData.trip.name"></b-input>
 			</b-field>
-				<h1 class="title">
-					Description
-				</h1>
-				<textarea class="textarea" input v-model="siteData.trip.description"/>
-				</textarea>
+			<h1 class="title">
+				Description
+			</h1>
+			<textarea class="textarea" input v-model="siteData.trip.description"/>
+			</textarea>
 			<b-field></b-field>
-				<h1 class="title">
-						Start of trip
-					</h1>
-					<nav class="level">
-								<div class="level-left">
-									<b-datepicker v-model="siteData.trip.startDate" placeholder="Select start date" :first-day-of-week="1"></b-datepicker>
-									<b-timepicker v-model="siteData.trip.startDate" placeholder="Select start time"></b-timepicker>
-								</div>
-					</nav>
+			
+			<h1 class="title">
+				Start of trip
+			</h1>
+			<nav class="level">
+				<div class="level-left">
+					<b-datepicker v-model="siteData.trip.startDate" placeholder="Select start date" :first-day-of-week="1"></b-datepicker>
+					<b-timepicker v-model="siteData.trip.startDate" placeholder="Select start time"></b-timepicker>
+				</div>
+			</nav>
+					
 			<b-field></b-field>
-					<h1 class="title">
-						End of trip
-					</h1>
-					<nav class="level">
-								<div class="level-left">
-									<b-datepicker v-model="siteData.trip.endDate" placeholder="Select end date" :min-date="siteData.trip.startDate" :first-day-of-week="1"></b-datepicker>
-									<b-timepicker v-model="siteData.trip.endDate" placeholder="Select end time" ></b-timepicker>
-								</div>
-					</nav>
+			<h1 class="title">
+				End of trip
+			</h1>
+			<nav class="level">
+				<div class="level-left">
+					<b-datepicker v-model="siteData.trip.endDate" placeholder="Select end date" :min-date="siteData.trip.startDate" :first-day-of-week="1"></b-datepicker>
+					<b-timepicker v-model="siteData.trip.endDate" placeholder="Select end time" ></b-timepicker>
+				</div>
+			</nav>
+	
+			
+			
+			
 			<map-component @point-added="addWaypoint" 
 				@add-photo="add-photo"
 				@remove-photo="removePhoto"
@@ -50,29 +56,31 @@
 				focusable>
 
 			<template slot-scope="props">
-		
+			
+				<!--<b-table-column field="id" label="ID" width="40" numeric: true>
+				{{ props.row.id }}
+				</b-table-column>-->
 				
-				<b-table-column field="latitude" label="Latitude"   centered>
+				<b-table-column field="latitude" label="Latitude" centered>
 					{{ props.row.latitude }}
 				</b-table-column>
 					
-				<b-table-column field="longitude" label="Longitude"  centered>
+				<b-table-column field="longitude" label="Longitude" centered>
 					{{ props.row.longitude }}
 				</b-table-column>
 				
 				<b-table-column field="date" label="Date" sortable centered>
-						
 					<b-collapse :open="false">
 						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(props.row.date).toLocaleString()}}<p></p><b-icon icon="pencil" size="is-small"></b-icon></button>
-							<nav class="level">
-								<div class="level-item">
-									<b-datepicker v-model="props.row.date" placeholder="Select Date" :first-day-of-week="1"></b-datepicker>
-									<b-timepicker v-model="props.row.date" placeholder="Select Time" ></b-timepicker></p>
-								</div>
-							</nav>
+						<nav class="level">
+							<div class="level-item">
+								<b-datepicker v-model="props.row.date" placeholder="Select Date" :first-day-of-week="1"></b-datepicker>
+								<b-timepicker v-model="props.row.date" placeholder="Select Time" ></b-timepicker></p>
+							</div>
+						</nav>
 					</b-collapse>
 				</b-table-column>
-				
+
 			</template>
 			
 			<template slot="detail" slot-scope="props">
@@ -84,8 +92,8 @@
 					</figure>    
 							
 						<div class="buttons">
-							<b-upload v-model="photos" v-on:change="addPhoto(photos[0])">
-								<a class="button is-success" id="photos">
+							<b-upload v-model="photos">
+								<a class="button is-success" v-on:click="setTmpPoint(props.row.id)" id="photos">
 									<b-icon icon="upload"></b-icon>
 									<span>Add Photo</span>
 								</a>
@@ -108,7 +116,7 @@
     	</b-table>
 		
 		<input class="button is-link" v-on:click="saveGPSFile" type="button" value="Save GPX file">
-		<b-upload v-model="files" v-on:change="readGPSFile(files[0])">
+		<b-upload v-model="files">
 			<a class="button is-link" id="files">
 				<b-icon icon="upload"></b-icon>
 				<span>Read GPX file</span>
@@ -151,28 +159,39 @@ export default {
 			siteData:{
 				trip: {},
 				loaded: true,
-				tmp: {}
+				tmp: {},
+				tmpPointId: null
 			},
-			selected: 1,
 			files: [],
 			photos: [],
-			defaultOpenedDetails: [],
+			defaultOpenedDetails: []
 		}
 	},
 	beforeMount(){
-		this.siteData.trip = DataService.createTrip("", "", null, null, []);
+		this.siteData.trip = DataService.createTrip(this.$route.params.id, "", "", null, null, []);
 		DataService.getTrip(this.$route.params.id)
 			.then(trip => this.siteData.trip = trip);
 	},
 	watch: {
 		files:function(val,oldval){
 			this.readGPSFile(this.files[0]);
-			}
+		},
+		photos:function(val,oldval){
+			console.log(val);
+			this.addPhoto(this.siteData.tmpPointId, this.photos[0]);
+		}
 	},
 	methods: {
+		setTmpPoint(id) {
+			this.siteData.tmpPointId = id;
+		},
 		readGPSFile(file) {
 			GPXService.readGPSFile(file)
-				.then(trip => this.siteData.trip = trip);
+				.then(trip => {
+					var id = this.siteData.trip.id;
+					this.siteData.trip = trip;
+					trip.id = id;
+				});
 		},
 		saveGPSFile() {
 			GPXService.saveGPSFile(this.siteData);
