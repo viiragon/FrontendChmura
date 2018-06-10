@@ -13,7 +13,24 @@
 			</h1>
 			<textarea class="textarea" input v-model="siteData.trip.description"/>
 			</textarea>
-				
+			<b-field></b-field>
+			
+					<h1 class="title">
+						Start of trip
+					</h1>
+					<b-datepicker v-model="siteData.trip.startDate" placeholder="Select end date" :first-day-of-week="1"></b-datepicker>
+					<b-timepicker v-model="siteData.trip.startDate" placeholder="Select start time"></b-timepicker>
+					
+			<b-field></b-field>
+			<h1 class="title">
+				End of trip
+			</h1>
+			<b-datepicker v-model="siteData.trip.endDate" placeholder="Select end date" :first-day-of-week="1"></b-datepicker>
+			<b-timepicker v-model="siteData.trip.endDate" placeholder="Select end time"></b-timepicker>
+			
+			
+			
+			
 			<map-component @point-added="addWaypoint" 
 				@add-photo="add-photo"
 				@remove-photo="removePhoto"
@@ -45,7 +62,9 @@
 				</b-table-column>
 				
 				<b-table-column field="date" label="Date" sortable centered>
-					{{ props.row.date }}
+						{{ new Date(props.row.date).toLocaleString()}}
+						<b-datepicker v-model="props.row.date" placeholder="Select Date" :first-day-of-week="1"></b-datepicker>
+						<b-timepicker v-model="props.row.date" placeholder="Select Time"></b-timepicker>
 				</b-table-column>
 				
 				<!--<b-table-column field="name" label="Name point" centered=true>
@@ -60,7 +79,8 @@
 						<p class="image is-128x128">
 							<img src="https://www.sydney.com/sites/sydney/files/styles/gallery_full_width/public/2017-12/Jacarandas%20in%20Spring%20bloom%2C%20Royal%20Botanic%20Garden%2C%20Sydney.jpg?itok=zpohBz_j">
 						</p>
-					</figure>                      	
+					</figure>    
+							
 						<div class="buttons">
 							<b-upload v-model="photos" v-on:change="addPhoto(photos[0])">
 								<a class="button is-success" id="photos">
