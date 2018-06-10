@@ -14,39 +14,49 @@ export default {
             video: null
         };
     },
-    createTrip: function(id, name, description, startDate, endDate, waypoints) {
+    createTrip: function(name, description, startDate, endDate, waypoints, tripId) {
         return {
 			tripId: id,
             name: name,
             description: description,
             start: startDate,
             end: endDate,
-            waypoints: waypoints
+            waypoints: waypoints,
+            tripId: tripId
         };
     },
     getTrip(index) {
         var self = this;
         return http.get("trips/" + index)
-            .then((data) => {                
-				var waypoints = [];
-				for (var i = 0; i < data.waypoints.length; i++) {
-					var point = self.createWaypoint(
-						data.waypoints[i].latitude, 
-						data.waypoints[i].longitude,
-						new Date(data.waypoints[i].date));
-					point.id = data.waypoints[i].waypointId;
-					waypoints.push(point);
-				}
-				var trip = self.createTrip(
-					index,
-					data.name, 
-					data.description, 
-					new Date(data.start), 
-					new Date(data.end), 
-					waypoints
-				);
-				return trip;
-			});
+            .then((data) => {
+
+            var waypoints = [];
+            for (var i = 0; i < data.waypoints.length; i++) {
+                var point = self.createWaypoint(
+                    data.waypoints[i].latitude, 
+                    data.waypoints[i].longitude,
+                    new Date(data.waypoints[i].date));
+                point.id = data.waypoints[i].waypointId;
+                waypoints.push(point);
+            }
+            var trip = self.createTrip(
+                data.name, 
+                data.description, 
+                new Date(data.start), 
+                new Date(data.end), 
+                waypoints,
+                data.tripId
+            );
+            return trip;
+        }).catch(error => {
+            console.log(error);	
+            
+            GPXService.getMock()
+                .then(trip => {
+                    return trip;
+                    console.log(trip);
+                });
+        });
     },
 	postWaypoint(tripId, point) {
         return http.post("trips/" + tripId + "/waypoints", {			
