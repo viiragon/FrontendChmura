@@ -1,5 +1,5 @@
 
-import CreatingDataService from "./CreatingDataService.js";
+import DataService from "./DataService.js";
 
 function findInXML(collection, name) {
     for (var i = 0; i < collection.length; i++) {
@@ -70,7 +70,7 @@ export default {
                     point = trkpts[i];
                     var date = new Date(findInXML(point.children, "time").innerHTML);
                     wayPoints.push(
-                        CreatingDataService.createWaypoint(
+                        DataService.createWaypoint(
                             parseFloat(point.attributes.lat.nodeValue),
                             parseFloat(point.attributes.lon.nodeValue),
                             date
@@ -83,7 +83,7 @@ export default {
                         endDate = date.getTime();
                     }
                 }
-                var trip = CreatingDataService.createTrip(
+                var trip = DataService.createTrip(
                     name,
                     description,
                     new Date(startDate),

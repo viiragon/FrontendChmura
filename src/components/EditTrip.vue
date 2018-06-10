@@ -107,21 +107,9 @@
 
 import Vue from 'vue'
 import MapComponent from './MapView';
-import VueInputAutowidth from 'vue-input-autowidth'
-import Buefy from 'buefy'
-import 'buefy/lib/buefy.min.css'
-import 'font-awesome/css/font-awesome.min.css'
 import http from './HttpService';
-import axios from 'axios';
 import GPXService from './GPXService.js';
-import CreatingDataService from './CreatingDataService.js';
-
-Vue.use(Buefy, {
-  defaultIconPack: "fa",
-  defaultContainerElement: "app"
-});
-Vue.use(VueInputAutowidth);
-
+import DataService from './DataService.js';
 
 var formatDate = function(value) {
   return (
@@ -139,14 +127,12 @@ export default {
     "map-component": MapComponent
   },
   data() {
-    const siteData = {
-      trip: {},
-      loaded: true,
-      tmp: {}
-    };
-
 		return {
-			siteData,
+			siteData:{
+				trip: {},
+				loaded: true,
+				tmp: {}
+			},
 			selected: 1,
 			files: [],
 			photos: [],
@@ -180,6 +166,11 @@ export default {
 			]
 		}
 	},
+	beforeMount(){
+		this.siteData.trip = DataService.createTrip("", "", null, null, []);
+		DataService.getTrip(this.$route.params.id)
+			.then(trip => this.siteData.trip = trip);
+	},
 	watch: {
 		files:function(val,oldval){
 			this.readGPSFile(this.files[0]);
@@ -195,60 +186,12 @@ export default {
 		},
 		addPoint(point) {
 			console.log(point)
-			this.siteData.trip.waypoints.push(CreatingDataService.createWaypoint(
+			this.siteData.trip.waypoints.push(DataService.createWaypoint(
 				point.lat, 
 				point.lng,
 				point.date
 			));
 		},
-		getTrip(index) {
-			var site = this;
-			http.get("trips/" + index)
-				.then((data) => {
-				console.log(data);
-				var waypoints = [];
-				for (var i = 0; i < data.waypoints.length; i++) {
-					var point = CreatingDataService.createWaypoint(
-						data.waypoints[i].latitude, 
-						data.waypoints[i].longitude,
-						new Date(data.waypoints[i].date));
-					point.id = data.waypoints[i].waypointId;
-					waypoints.push(point);
-				}
-				var trip = CreatingDataService.createTrip(
-					data.name, 
-					data.description, 
-					new Date(data.start), 
-					new Date(data.end), 
-					waypoints
-				);
-				site.siteData.trip = trip;
-			}).catch(error => {
-				console.log(error);	
-				
-				GPXService.getMock()
-					.then(trip => {
-						this.siteData.trip = trip;
-						console.log(trip);
-					});
-			});
-		},
-		setDummyTrip() {
-			this.siteData.trip = CreatingDataService.createTrip(
-				"Okolice Warszawy", 
-				"Blablabla",
-				new Date("2017-08-22T06:11:00.000Z"),
-				new Date("2017-09-22T06:11:00.000Z"),
-				[]
-			);
-		},
-		setRandomWayPoint() {
-			this.siteData.trip.waypoints.push(CreatingDataService.createWaypoint(
-				(Math.random() - 0.5) * 90, 
-				(Math.random() - 0.5) * 180,
-				new Date("2017-09-22T06:11:00.000Z"))
-			);
-		}, 
 		save() {
 			console.log("Let's pretend it works OwO");
 		}, 
@@ -289,9 +232,6 @@ export default {
 				console.log("Video removed");
 			} 
 			}
-		}, 
-		createNewItem() {
-			this.siteData.trip.waypoints.push(CreatingDataService.createWaypoint(0, 0, new Date()));
 		},
 		deleteItem(id) {	
 			console.log(this.siteData.trip.waypoints);
@@ -302,10 +242,6 @@ export default {
 				}
 			} 
 		}
-	},
-	beforeMount(){
-		this.siteData.trip = CreatingDataService.createTrip("", "", null, null, []);
-		this.getTrip(this.$route.params.id);
 	}
 }
 
