@@ -85,7 +85,7 @@
 			
 			<footer class="modal-card-foot">
 				<button class="button" type="button" @click="$parent.close()">Zamknij</button>
-				<button v-if="isEdit==true" @click="isEdit=false" class="button is-danger">Usuń</button>
+				<button v-if="isEdit==true" @click="deleteWaypoint()" class="button is-danger">Usuń</button>
 				<button v-if="isEdit==false" @click="isEdit=true" class="button is-info">Edytuj</button>
 				<button v-if="isEdit==true" @click="isEdit=false" class="button is-info">Zapisz</button>
 			</footer>
@@ -96,34 +96,47 @@
 </template>
 
 <script>
+
+import http from "./HttpService.js";
+
 export default {
   name: "MapModal",
   props: ["isCardModalActive", ""],
   methods: {
-	open: function() {
-	  this.isCardModalActive = true;
-	},
-	close: function() {
-	  this.isCardModalActive = false;
-	},
-	deleteDropFile(index) {
-                this.dropFiles.splice(index, 1)
-            }
+    open: function() {
+      this.isCardModalActive = true;
+    },
+    close: function() {
+      this.isCardModalActive = false;
+    },
+    deleteDropFile(index) {
+      this.dropFiles.splice(index, 1);
+    },
+    deleteWaypoint: function() {
+		this.isEdit=false;
+		console.log("ddd")
+	  console.log(this.waypoint.get("id"));
+	  
+	  http.delete()
+    }
   },
+  props: ["waypoint"],
   data() {
-	return {
-		dropFiles: [],
-		otherPoints: [{name: "Punkt Początkowy", id: 44}],
-		isEdit: false,
-		
-                isImageModalActive: false,
-	  imageUrls: [
-		"https://www.sydney.com/sites/sydney/files/styles/gallery_full_width/public/2017-12/Jacarandas%20in%20Spring%20bloom%2C%20Royal%20Botanic%20Garden%2C%20Sydney.jpg?itok=zpohBz_j",
-		"https://www.adventure24.pl/upload/products/australia-objazd--gora-kosciuszki-1354716105.jpg"
-	  ],
-	  title: "Punkt w Australii",
-	  description: "Curabitur accumsan turpis pharetra <strong>augue tincidunt</strong> blandit. Quisque condimentum maximus mi, sit amet commodo arcu rutrum id. Proin pretium urna vel cursus venenatis. Suspendisse potenti. Etiam mattis sem rhoncus lacus dapibus facilisis. Donec at dignissim dui. Ut et neque nisl."
-	};
+    return {
+      dropFiles: [],
+
+      otherPoints: [{ name: "Punkt Początkowy", id: 44 }],
+      isEdit: false,
+
+      isImageModalActive: false,
+      imageUrls: [
+        "https://www.sydney.com/sites/sydney/files/styles/gallery_full_width/public/2017-12/Jacarandas%20in%20Spring%20bloom%2C%20Royal%20Botanic%20Garden%2C%20Sydney.jpg?itok=zpohBz_j",
+        "https://www.adventure24.pl/upload/products/australia-objazd--gora-kosciuszki-1354716105.jpg"
+      ],
+      title: "Punkt w Australii",
+      description:
+        "Curabitur accumsan turpis pharetra <strong>augue tincidunt</strong> blandit. Quisque condimentum maximus mi, sit amet commodo arcu rutrum id. Proin pretium urna vel cursus venenatis. Suspendisse potenti. Etiam mattis sem rhoncus lacus dapibus facilisis. Donec at dignissim dui. Ut et neque nisl."
+    };
   }
 };
 </script>

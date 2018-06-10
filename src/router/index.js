@@ -1,10 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-import vueResource from "vue-resource";
-Vue.use(vueResource);
-import Buefy from "buefy";
-import "buefy/lib/buefy.css";
-Vue.use(Buefy);
+
 import auth from '../auth'
 import HelloWorld from "@/components/HelloWorld";
 import StartView from"@/components/StartView";

@@ -52,9 +52,9 @@
 		},
 		mounted () {
 			var vm = this;
-			http.get("trips", function(response) {
-				vm.trips = response.data.content;
-			}, function(error) {
+			http.get("trips").then((data) => {
+				vm.trips = data.content;
+			}).catch((error) => {
 				console.log("error: " + error);
 			});
 		}
