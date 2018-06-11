@@ -174,11 +174,12 @@ export default {
 	beforeMount(){
 		this.siteData.trip = DataService.createTrip(this.$route.params.id, "", "", null, null, []);
 		this.siteData.load.loadingMessage = "Loading...";
+		this.siteData.load.loaded = false;
 		DataService.getTrip(this.$route.params.id)
 			.then(trip => {
 				this.siteData.trip = trip;
 				this.siteData.load.loaded = true;
-				/*DataService.deleteWaypoint(trip.tripId, trip.waypoints[0].id)
+				/*DataService.updateWholeTrip(trip, trip)
 					.then((data) => {
 						console.log(data);
 					}).catch((error) => {
@@ -212,11 +213,33 @@ export default {
 			this.siteData.tmpPointId = id;
 		},
 		readGPSFile(file) {
+			this.siteData.load.loadingMessage = "Loading...";
+			this.siteData.load.loaded = false;
 			GPXService.readGPSFile(file)
 				.then(trip => {
-					var id = this.siteData.trip.tripId;
+					DataService.updateWholeTrip(this.siteData.trip, trip)
+						.then((data) => {
+							this.$toast.open({
+								duration: 5000,
+								message: "Trip was loaded",
+								type: 'is-success'
+							});
+							this.siteData.trip = data;
+							this.siteData.load.loaded = true;
+						}).catch((error) => {
+							console.log(error);
+							this.siteData.load.loaded = true;
+						});
+					/*var id = this.siteData.trip.tripId;
 					this.siteData.trip = trip;
-					trip.tripId = id;
+					trip.tripId = id;*/
+				}).catch((error) => {
+					this.$toast.open({
+						duration: 5000,
+						message: "Not a proper GPX file",
+						type: 'is-danger'
+					});
+					this.siteData.load.loaded = true;
 				});
 		},
 		saveGPSFile() {

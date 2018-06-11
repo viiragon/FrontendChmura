@@ -49,7 +49,7 @@ export default {
         self.placeMarker(event.latLng, this.map);
       });
 
-      http.get(`trips/bdf17206-578f-4556-ba33-e788c8567d22`).then(data => {
+      http.get(`trips/${self.tripId}`).then(data => {
         data.waypoints.forEach(waypoint => {
           var marker = self.placeMarker(new google.maps.LatLng({
             lat: waypoint.latitude,
@@ -58,7 +58,7 @@ export default {
           }), this.map);
 
           marker.set("id", waypoint.id);
-          console.log("xdd", waypoint.latitude,waypoint.longitude)
+          //console.log("xdd", waypoint.latitude,waypoint.longitude)
         });
       });
     }

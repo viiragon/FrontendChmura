@@ -28,7 +28,8 @@ export default {
                 var reader = new FileReader();
                 reader.onload = e => {
                     self.readGPSText(e.target.result)
-                    .then(trip => resolve(trip));
+						.then(trip => resolve(trip))
+						.catch(error => reject(error));
                 };
                 reader.readAsText(file);
                 console.log("Loading file: " + file.name);
@@ -53,42 +54,80 @@ export default {
                     xmlDoc.loadXML(textFile);
                 }
                 var gpx = xmlDoc.getElementsByTagName("gpx")[0];
-                
+				
                 var metadata = findInXML(gpx.children, "metadata");
-                var name = findInXML(metadata.children, "name").innerHTML;
-                var description = findInXML(metadata.children, "desc").innerHTML;
-                
+				var name = "";
+				var description = "";
                 var wayPoints = [];
-                var trkpts = findAllInXML(
-                    findInXML(findInXML(gpx.children, "trk").children, "trkseg").children,
-                    "trkpt"
-                );
-                var point;
-                var startDate = Number.MAX_SAFE_INTEGER,
-                endDate = 0;
-                for (var i = 0; i < trkpts.length; i++) {
-                    point = trkpts[i];
-                    var date = new Date(findInXML(point.children, "time").innerHTML);
-                    wayPoints.push(
-                        DataService.createWaypoint(
-                            parseFloat(point.attributes.lat.nodeValue),
-                            parseFloat(point.attributes.lon.nodeValue),
-                            date
-                        )
-                    );
-                    if (date.getTime() < startDate) {
-                        startDate = date.getTime();
-                    }
-                    if (date.getTime() > endDate) {
-                        endDate = date.getTime();
-                    }
-                }
+				var startDate = new Date(),
+						endDate = new Date();
+				var tmpElement;
+				if (metadata != null) {
+					tmpElement = findInXML(metadata.children, "name");
+					if (tmpElement != null) {
+						name = tmpElement.innerHTML;
+					}
+					tmpElement = findInXML(metadata.children, "desc");
+					if (tmpElement != null) {
+						description = tmpElement.innerHTML;
+					}
+				}
+				var trk = findInXML(gpx.children, "trk");
+				tmpElement = findInXML(trk.children, "name");
+				if (name == "" && tmpElement != null) {
+					name = tmpElement.innerHTML;
+				}
+				tmpElement = findInXML(trk.children, "desc");
+				if (description == "" && tmpElement != null) {
+					description = tmpElement.innerHTML;
+				}
+				
+				var trkseg = findInXML(trk.children, "trkseg");
+				tmpElement = findInXML(trkseg.children, "name");
+				if (name == "" && tmpElement != null) {
+					name = tmpElement.innerHTML;
+				}
+				tmpElement = findInXML(trkseg.children, "desc");
+				if (description == "" && tmpElement != null) {
+					description = tmpElement.innerHTML;
+				}
+				
+                var trkpts = findAllInXML(trkseg.children, "trkpt");
+				if (trkpts.length > 0) {
+					var point;
+					var start = Number.MAX_SAFE_INTEGER,
+						end = 0;
+					for (var i = 0; i < trkpts.length; i++) {
+						point = trkpts[i];
+						tmpElement = findInXML(point.children, "time");
+						if (tmpElement != null) {							
+							var date = new Date(findInXML(point.children, "time").innerHTML);
+						} else {
+							var date = new Date();
+						}
+						wayPoints.push(
+							DataService.createWaypoint(
+								parseFloat(point.attributes.lat.nodeValue),
+								parseFloat(point.attributes.lon.nodeValue),
+								date
+							)
+						);
+						if (date.getTime() < start) {
+							start = date.getTime();
+						}
+						if (date.getTime() > end) {
+							end = date.getTime();
+						}
+					}
+					startDate = new Date(start);
+					endDate = new Date(end);
+				}
                 var trip = DataService.createTrip(
 					"",
                     name,
                     description,
-                    new Date(startDate),
-                    new Date(endDate),
+                    startDate,
+                    endDate,
                     wayPoints
                 );
                 console.log('Trip "' + name + '" loaded!');
