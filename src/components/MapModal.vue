@@ -114,10 +114,9 @@ export default {
     },
     deleteWaypoint: function() {
 		this.isEdit=false;
-		console.log("ddd")
-	  console.log(this.waypoint.get("id"));
-	  
-	  http.delete()
+		
+		this.$emit("remove-waypoint", this.waypoint.get("id"));
+		this.$parent.close();
     }
   },
   props: ["waypoint"],

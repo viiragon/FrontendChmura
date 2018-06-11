@@ -4,7 +4,7 @@
     <div id="map"></div>
     
         <b-modal :active.sync="isCardModalActive" :width="640" scroll="keep">
-            <map-modal :isCardModalActive.sync="isCardModalActive" :waypoint="clickedWaypoint" has-modal-card>
+            <map-modal :isCardModalActive.sync="isCardModalActive" :waypoint="clickedWaypoint" @remove-waypoint="removeWaypoint" has-modal-card>
         </map-modal>
         
         </b-modal>
@@ -73,8 +73,8 @@ export default {
         
         this.$emit("point-added", {
             id: Math.random() * 100000,
-            lng: location.lng(),
-            lat: location.lat(),
+            lng: event.latLng.lng(),
+            lat: event.latLng.lat(),
             date: new Date()
         });
 
@@ -82,7 +82,9 @@ export default {
     },
     removeWaypoint: function(waypointId) {
         console.log(waypointId);
-        http.delete(`trips/${this.tripId}/waypoints/${waypointId}`);
+        this.$emit("remove-waypoint", waypointId);
+
+        // http.delete(`trips/${this.tripId}/waypoints/${waypointId}`);
     },
     activateModal: function(e) {
       console.log(this.isCardModalActive);
@@ -106,12 +108,12 @@ export default {
 
         flightPath.setMap(map);
         google.maps.event.addListener(marker, "click", () => {
-            // this.activateModal(marker);
-            this.removeWaypoint(markerId)
+            this.activateModal(marker);
+            //this.removeWaypoint(markerId)
         });
 
         marker.set("id", markerId);
-        console.log("click", location, markerId);
+        // console.log("click", location, markerId);
 
         return marker;
     },

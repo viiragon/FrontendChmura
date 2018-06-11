@@ -42,7 +42,7 @@
 			<map-component @point-added="addWaypoint" 
 				@add-photo="add-photo"
 				@remove-photo="removePhoto"
-				@remove-point="deleteWaypoint"
+				@remove-waypoint="deleteWaypoint"
 				:trip-id="siteData.trip.tripId"
 				:waypoints="siteData.trip.waypoints"></map-component>
 
