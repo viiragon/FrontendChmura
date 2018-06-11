@@ -1,7 +1,7 @@
 <template>
 	<section class="section">
 		<a id="download" href="data" download="null.txt"></a>
-		<div v-if="siteData.loaded">
+		<div v-if="siteData.load.loaded">
 			<h1 class="title">
 				Title
 			</h1>
@@ -126,7 +126,9 @@
 			
 	</div>
 	<div v-else>
-		LOADING...
+		<h1 class="title">
+			{{ siteData.load.loadingMessage }}
+		</h1>
 	</div>
 	</section> 
 </template>
@@ -158,8 +160,10 @@ export default {
 		return {
 			siteData:{
 				trip: {},
-				loaded: true,
-				tmp: {},
+				load: {					
+					loaded: false,
+					loadingMessage: ""
+				},
 				tmpPointId: null
 			},
 			files: [],
@@ -169,8 +173,30 @@ export default {
 	},
 	beforeMount(){
 		this.siteData.trip = DataService.createTrip(this.$route.params.id, "", "", null, null, []);
+		this.siteData.load.loadingMessage = "Loading...";
 		DataService.getTrip(this.$route.params.id)
-			.then(trip => this.siteData.trip = trip);
+			.then(trip => {
+				this.siteData.trip = trip;
+				this.siteData.load.loaded = true;
+				/*DataService.deleteWaypoint(trip.tripId, trip.waypoints[0].id)
+					.then((data) => {
+						console.log(data);
+					}).catch((error) => {
+						console.log(error);
+					});*/
+			}).catch((error) => {
+				if (error.response) {
+					var errorCode = error.response.status;
+					if (errorCode >= 400 && errorCode < 500) {
+						this.siteData.load.loadingMessage = `Site cannot load your trip. Please try again`;
+					} else {
+						this.siteData.load.loadingMessage = `Unknown error occured. Please try again`;
+					}
+				} else {
+					this.siteData.load.loadingMessage = `Unknown error occured. Please try again`;
+				}
+				console.log(error);
+			});
 	},
 	watch: {
 		files:function(val,oldval){
@@ -188,9 +214,9 @@ export default {
 		readGPSFile(file) {
 			GPXService.readGPSFile(file)
 				.then(trip => {
-					var id = this.siteData.trip.id;
+					var id = this.siteData.trip.tripId;
 					this.siteData.trip = trip;
-					trip.id = id;
+					trip.tripId = id;
 				});
 		},
 		saveGPSFile() {

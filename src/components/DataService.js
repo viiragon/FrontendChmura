@@ -16,7 +16,7 @@ export default {
     },
     createTrip: function(id, name, description, startDate, endDate, waypoints) {
         return {
-			id: id,
+			tripId: id,
             name: name,
             description: description,
             start: startDate,
@@ -46,32 +46,21 @@ export default {
 					waypoints
 				);
 				return trip;
-			}).catch(error => {
-				console.log(error);	
-				
-				/*GPXService.getMock()
-					.then(trip => {
-						return trip;
-						console.log(trip);
-					});*/
 			});
     },
-	sendWaypoint(tripId, point) {
-		var self = this;
-        return http.post("trips/" + tripId + "/waypoint", {			
+	postWaypoint(tripId, point) {
+        return http.post("trips/" + tripId + "/waypoints", {			
             latitude: point.latitude,
             longitude: point.longitude,
             date: point.date,
             photo: point.photo,
             video: point.video
-		})
-            .then((data) => {  
-				return data;
-			}).catch(error => {
-				console.log(error);	
-			});
+		});
 	},
-	updatePartialTrip(trip) { //Podstawowe dane wycieczki bez punktów
+	deleteWaypoint(tripId, pointId) {
+        return http.delete("trips/" + tripId + "/waypoints/" + pointId);
+	},
+	/*updatePartialTrip(trip) { //Podstawowe dane wycieczki bez punktów
 		var self = this;
         http.get("trips/" + index)
 			.then((data) => {
@@ -82,5 +71,5 @@ export default {
 	},
 	updateWholeTrip(currentTrip, newTrip) { //Cała wycieczka wraz z punktami (usuwa wszystkie punkty i ponownie dodaje)
 		
-	}
+	}*/
 }
