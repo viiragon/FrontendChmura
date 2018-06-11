@@ -15,7 +15,6 @@
 			</textarea>
 			<b-field></b-field>
 			
-<<<<<<< HEAD
 			<h1 class="title">
 				Start of trip
 			</h1>
@@ -43,17 +42,9 @@
 			<map-component @point-added="addWaypoint" 
 				@add-photo="add-photo"
 				@remove-photo="removePhoto"
-				@remove-point="removePoint"
+				@remove-point="deleteWaypoint"
 				:trip-id="siteData.trip.tripId"
 				:waypoints="siteData.trip.waypoints"></map-component>
-=======
-		<map-component @point-added="addWaypoint" 
-			@add-photo="add-photo"
-			@remove-photo="removePhoto"
-			@remove-point="deleteWaypoint"
-			:trip-id="siteData.trip.tripId"
-			:waypoints="siteData.trip.waypoints"></map-component>
->>>>>>> Dodawanie i usuwanie waypointów na mapie
 
 			<b-table
 				:data="siteData.trip.waypoints"
@@ -181,14 +172,14 @@ export default {
 		}
 	},
 	beforeMount(){
-<<<<<<< HEAD
-		this.siteData.trip = DataService.createTrip(this.$route.params.id, "", "", null, null, []);
+		var tripId = this.$route.params.id;
+		
+		console.log(tripId, "route id")
+		// this.siteData.trip = DataService.createTrip(tripId, "", "", null, null, []);
 		this.siteData.load.loadingMessage = "Loading...";
-=======
-		this.siteData.trip = DataService.createTrip("", "", null, null, [], null);
->>>>>>> Dodawanie i usuwanie waypointów na mapie
-		DataService.getTrip(this.$route.params.id)
+		DataService.getTrip(tripId)
 			.then(trip => {
+				console.log(trip)
 				this.siteData.trip = trip;
 				this.siteData.load.loaded = true;
 				/*DataService.deleteWaypoint(trip.tripId, trip.waypoints[0].id)

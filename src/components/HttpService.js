@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-<<<<<<< HEAD
 var mainUrl = "http://104.41.220.226:8080/api/";
 
 function getConfig() { 
@@ -19,22 +18,6 @@ function getConfig() {
 		}
 	};
 }
-=======
-var config = {
-    headers: {
-        'Access-Control-Allow-Origin': '*',
-        // 'Authorization': 'Basic YWRtaW46MTIzNA==',
-        'Accept': 'application/json',
-        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
-        // 'Access-Control-Allow-Headers': 'Authorization',
-        // "Content-Type": "application/json",
-    },
-    auth: {
-        username: 'user',
-        password: '1234'
-    }
-};
->>>>>>> Dodawanie i usuwanie waypointów na mapie
 
 export function getTrips() {
   axios

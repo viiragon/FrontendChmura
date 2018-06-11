@@ -14,15 +14,14 @@ export default {
             video: null
         };
     },
-    createTrip: function(name, description, startDate, endDate, waypoints, tripId) {
+    createTrip: function(id, name, description, startDate, endDate, waypoints) {
         return {
 			tripId: id,
             name: name,
             description: description,
             start: startDate,
             end: endDate,
-            waypoints: waypoints,
-            tripId: tripId
+            waypoints: waypoints
         };
     },
     getTrip(index) {
@@ -40,12 +39,12 @@ export default {
                 waypoints.push(point);
             }
             var trip = self.createTrip(
+                data.tripId,
                 data.name, 
                 data.description, 
                 new Date(data.start), 
                 new Date(data.end), 
-                waypoints,
-                data.tripId
+                waypoints
             );
             return trip;
         }).catch(error => {

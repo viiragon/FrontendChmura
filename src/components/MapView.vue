@@ -47,7 +47,7 @@ export default {
         
       },
       tripId: function(tripId) {
-          console.log("ripId", tripId)
+          console.log("tripId", tripId)
       }
   },
   methods: {
