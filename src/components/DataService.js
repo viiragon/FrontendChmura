@@ -27,26 +27,35 @@ export default {
     getTrip(index) {
         var self = this;
         return http.get("trips/" + index)
-            .then((data) => {                
-				var waypoints = [];
-				for (var i = 0; i < data.waypoints.length; i++) {
-					var point = self.createWaypoint(
-						data.waypoints[i].latitude, 
-						data.waypoints[i].longitude,
-						new Date(data.waypoints[i].date));
-					point.id = data.waypoints[i].waypointId;
-					waypoints.push(point);
-				}
-				var trip = self.createTrip(
-					index,
-					data.name, 
-					data.description, 
-					new Date(data.start), 
-					new Date(data.end), 
-					waypoints
-				);
-				return trip;
-			});
+            .then((data) => {
+
+            var waypoints = [];
+            for (var i = 0; i < data.waypoints.length; i++) {
+                var point = self.createWaypoint(
+                    data.waypoints[i].latitude, 
+                    data.waypoints[i].longitude,
+                    new Date(data.waypoints[i].date));
+                point.id = data.waypoints[i].waypointId;
+                waypoints.push(point);
+            }
+            var trip = self.createTrip(
+                data.tripId,
+                data.name, 
+                data.description, 
+                new Date(data.start), 
+                new Date(data.end), 
+                waypoints
+            );
+            return trip;
+        }).catch(error => {
+            console.log(error);	
+            
+            GPXService.getMock()
+                .then(trip => {
+                    return trip;
+                    console.log(trip);
+                });
+        });
     },
 	postWaypoint(tripId, point) {
         return http.post("trips/" + tripId + "/waypoints", {			

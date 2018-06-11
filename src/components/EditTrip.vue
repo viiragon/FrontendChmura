@@ -42,7 +42,7 @@
 			<map-component @point-added="addWaypoint" 
 				@add-photo="add-photo"
 				@remove-photo="removePhoto"
-				@remove-point="removePoint"
+				@remove-waypoint="deleteWaypoint"
 				:trip-id="siteData.trip.tripId"
 				:waypoints="siteData.trip.waypoints"></map-component>
 
@@ -172,11 +172,15 @@ export default {
 		}
 	},
 	beforeMount(){
-		this.siteData.trip = DataService.createTrip(this.$route.params.id, "", "", null, null, []);
+		var tripId = this.$route.params.id;
+		
+		console.log(tripId, "route id")
+		// this.siteData.trip = DataService.createTrip(tripId, "", "", null, null, []);
 		this.siteData.load.loadingMessage = "Loading...";
 		this.siteData.load.loaded = false;
-		DataService.getTrip(this.$route.params.id)
+		DataService.getTrip(tripId)
 			.then(trip => {
+				console.log(trip)
 				this.siteData.trip = trip;
 				this.siteData.load.loaded = true;
 				/*DataService.updateWholeTrip(trip, trip)
@@ -275,7 +279,6 @@ export default {
 			} 
 			}
 		}, 
-		
 		removePhoto(id) {
 			for (var update = 0; update<this.siteData.trip.waypoints.length; update++)
 			{
