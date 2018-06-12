@@ -193,6 +193,7 @@ export default {
 		// this.siteData.trip = DataService.createTrip(tripId, "", "", null, null, []);
 		this.siteData.load.loadingMessage = "Loading...";
 		this.siteData.load.loaded = false;
+		
 		DataService.getTrip(tripId)
 			.then(trip => {
 				console.log(trip)
@@ -224,12 +225,16 @@ export default {
 		},
 		photos: function(val,oldval){
 			console.log(val);
-			this.addPhoto(this.siteData.tmpPointId, this.photos[0]);
+			var formData = new FormData();
+			formData.append("photo", this.photos[0]);
+			var photo = DataService.createPhoto(DataService.getNextPhotoId(), formData, "")
+			this.addPhoto(this.siteData.tmpPointId, photo);
 		}
 	},
 	methods: {
 		updateAll() {
-			DataService.updateWholeTrip(this.siteData.trip, this.siteData.trip)
+			//DataService.updateWholeTrip(this.siteData.trip, this.siteData.trip)
+			DataService.updatePartialTrip(this.siteData.trip.tripId, this.siteData.trip)
 				.then((data) => {
 					this.$dialog.alert('Trip was saved')
 					this.siteData.trip = data;
@@ -251,7 +256,7 @@ export default {
 			}, 1000);*/
 		},
 		updatePointData(point) {
-			/*var timeout = null;
+			var timeout = null;
 			var id = point.id;
 			for (var i = 0; i < this.siteData.timeout.points.length; i++) {
 				if (this.siteData.timeout.points[i].id == id) {
@@ -275,7 +280,7 @@ export default {
 					}).catch((error) => {
 						console.log(error);
 					});
-			}, 1000);*/
+			}, 1000);
 		},
 		setTmpPoint(id) {
 			this.siteData.tmpPointId = id;
@@ -312,32 +317,32 @@ export default {
 		},
 		addWaypoint(point) {
 			console.log(point);
-			this.siteData.trip.waypoints.push(DataService.createWaypointFromMap(point));
-			/*DataService.postWaypoint(this.siteData.trip.tripId, DataService.createWaypointFromMap(point))
+			//this.siteData.trip.waypoints.push(DataService.createWaypointFromMap(point));
+			DataService.postWaypoint(this.siteData.trip.tripId, DataService.createWaypointFromMap(point))
 				.then((data) => {				
 					this.siteData.trip.waypoints.push(DataService.createWaypoint(
-						//data.waypointId,
-						DataService.getNextId(),
-						point.latitude, 
+						data.waypointId,
+						//DataService.getNextId(),
+						data.latitude, 
 						data.longitude,
-						data.date
+						new Date(data.date)
 					));
 				}).catch((error) => {
 					console.log(error);
-				})*/
+				})
 		},
 		deleteWaypoint(id) {	
 			console.log(this.siteData.trip.waypoints);
 			for (var update = 0; update < this.siteData.trip.waypoints.length; update++){
 				if (id == this.siteData.trip.waypoints[update].id) {
-					/*DataService.deleteWaypoint(this.siteData.trip.tripId, id)
-						.then(() => {*/
+					DataService.deleteWaypoint(this.siteData.trip.tripId, id)
+						.then(() => {
 							this.siteData.trip.waypoints.splice(update, 1);
 							console.log("Waypoint id." + id + " removed");
-						/*}).catch((error) => {
+						}).catch((error) => {
 							console.log(error);
 						});
-					break;*/
+					break;
 				}
 			} 
 		},
