@@ -2,6 +2,7 @@ import GPXService from './GPXService.js';
 import http from './HttpService.js';
 
 var nextId = 0;
+var nextPhotoId = 0;
 
 function encode_utf8(s) {
 	return s
@@ -28,6 +29,9 @@ export default {
 	getNextId: function() {
 		return nextId++;
 	},
+	getNextPhotoId: function() {
+		return nextPhotoId++;
+	},
     createWaypoint: function(id, lat, lon, date) {
         return {
             id: id,
@@ -40,12 +44,19 @@ export default {
     },
     createWaypointFromMap: function(point) {
         return {
-            id: nextId++,
+            id: this.getNextId(),
             latitude: point.lat,
             longitude: point.lng,
             date: point.date,
             photo: null,
             video: null
+        };
+    },
+    createPhoto: function(id, data, url) {
+        return {
+            id: id,
+            data: data,
+            url: url
         };
     },
     createTrip: function(id, name, description, startDate, endDate, waypoints) {
@@ -64,6 +75,7 @@ export default {
             .then((data) => {
 
             var waypoints = [];
+			console.log(data.waypoints);
             for (var i = 0; i < data.waypoints.length; i++) {
                 var point = self.createWaypoint(
 					data.waypoints[i].waypointId,
