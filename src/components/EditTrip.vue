@@ -18,24 +18,28 @@
 			<h1 class="title">
 				Start of trip
 			</h1>
-			<nav class="level">
-				<div class="level-left">
-					<b-datepicker v-on:input="updateData"  v-model="siteData.trip.startDate" placeholder="Select start date" :first-day-of-week="1"></b-datepicker>
-					<b-timepicker v-on:input="updateData"  v-model="siteData.trip.startDate" placeholder="Select start time"></b-timepicker>
-				</div>
-			</nav>
-					
+			<b-collapse :open="false">
+						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(siteData.trip.start).toLocaleString()}}<p></p><b-icon icon="pencil" size="is-small"></b-icon></button>
+						<nav class="level">
+						<div class="level-left">
+							<b-datepicker v-on:input="updateData"  v-model="siteData.trip.start" placeholder="Select start date" :first-day-of-week="1"></b-datepicker>
+							<b-timepicker v-on:input="updateData"  v-model="siteData.trip.start" placeholder="Select start time" ></b-timepicker>
+						</div>
+						</nav>
+			</b-collapse>		
 			<b-field></b-field>
 			<h1 class="title">
 				End of trip
 			</h1>
-			<nav class="level">
-				<div class="level-left">
-					<b-datepicker v-on:input="updateData" v-model="siteData.trip.endDate" placeholder="Select end date" :min-date="siteData.trip.startDate" :first-day-of-week="1"></b-datepicker>
-					<b-timepicker v-on:input="updateData" v-model="siteData.trip.endDate" placeholder="Select end time" ></b-timepicker>
-				</div>
-			</nav>
-	
+			<b-collapse :open="false">
+						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(siteData.trip.end).toLocaleString()}}<p></p><b-icon icon="pencil" size="is-small"></b-icon></button>
+						<nav class="level">
+						<div class="level-left">
+							<b-datepicker v-on:input="updateData" v-model="siteData.trip.end" placeholder="Select end date" :min-date="siteData.trip.startDate" :first-day-of-week="1"></b-datepicker>
+							<b-timepicker v-on:input="updateData" v-model="siteData.trip.end" placeholder="Select end time" ></b-timepicker>
+						</div>
+						</nav>
+			</b-collapse>	
 			
 			
 			
@@ -124,9 +128,9 @@
 				</a>
 			</b-upload>
 			<input class="button is-link" v-on:click="" type="button" value="Show Poster">
+			<input class="button is-danger is-pulled-right" v-on:click="deleteTrip" type="button" value="DeleteTrip">
+			<input class="button is-link is-pulled-right" v-on:click="updateAll" type="button" value="Save Trip">
 		</div>
-		<input class="button is-large is-danger is-pulled-right" v-on:click="deleteTrip" type="button" value="Delete Trip">
-		<input class="button is-large is-link is-pulled-right" v-on:click="updateAll" type="button" value="Save Trip">
 			
 	</div>
 	<div v-else>
