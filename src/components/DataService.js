@@ -4,7 +4,20 @@ import http from './HttpService.js';
 var nextId = 0;
 
 function encode_utf8(s) {
-  return encodeURIComponent(s);
+	return s
+		.replace(/[Ą]/g, "A")
+		.replace(/[ą]/g, "a")
+		.replace(/[Ł]/g, "L")
+		.replace(/[ł]/g, "l")
+		.replace(/[Ó]/g, "O")
+		.replace(/[ó]/g, "o")
+		.replace(/[Ś]/g, "S")
+		.replace(/[ś]/g, "s")
+		.replace(/[Ć]/g, "C")
+		.replace(/[ć]/g, "c")
+		.replace(/[ŻŹ]/g, "Z")
+		.replace(/[żź]/g, "z")
+		.replace(/[^\x00-\x7F]/g, "");
 }
 
 function decode_utf8(s) {
@@ -136,8 +149,8 @@ export default {
 	updatePartialTrip(tripId, trip) { //Podstawowe dane wycieczki bez punktów
 		var self = this;
         return http.put("trips/" + tripId, {
-			name: trip.name,
-			description: trip.description,
+			name: encode_utf8(trip.name),
+			description: encode_utf8(trip.description),
 			start: trip.start,
 			end: trip.end,
 			waypoints: []
