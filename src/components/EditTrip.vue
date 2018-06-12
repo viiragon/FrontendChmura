@@ -125,7 +125,8 @@
 			</b-upload>
 			<input class="button is-link" v-on:click="" type="button" value="Show Poster">
 		</div>
-		<input class="button is-large is-danger is-pulled-right" v-on:click="deleteTrip" type="button" value="DeleteTrip">
+		<input class="button is-large is-danger is-pulled-right" v-on:click="deleteTrip" type="button" value="Delete Trip">
+		<input class="button is-large is-link is-pulled-right" v-on:click="updateAll" type="button" value="Save Trip">
 			
 	</div>
 	<div v-else>
@@ -220,8 +221,17 @@ export default {
 		}
 	},
 	methods: {
+		updateAll() {
+			DataService.updateWholeTrip(this.siteData.trip, this.siteData.trip)
+				.then((data) => {
+					this.$dialog.alert('Trip was saved')
+					this.siteData.trip = data;
+				}).catch((error) => {
+					console.log(error);
+				});
+		},
 		updateData() {
-			if (this.siteData.timeout.data) {
+			/*if (this.siteData.timeout.data) {
 				clearTimeout(this.siteData.timeout.data);
 			}
 			this.siteData.timeout.data = setTimeout(() => {
@@ -231,10 +241,10 @@ export default {
 					}).catch((error) => {
 						console.log(error);
 					});
-			}, 1000);
+			}, 1000);*/
 		},
 		updatePointData(point) {
-			var timeout = null;
+			/*var timeout = null;
 			var id = point.id;
 			for (var i = 0; i < this.siteData.timeout.points.length; i++) {
 				if (this.siteData.timeout.points[i].id == id) {
@@ -258,7 +268,7 @@ export default {
 					}).catch((error) => {
 						console.log(error);
 					});
-			}, 1000);
+			}, 1000);*/
 		},
 		setTmpPoint(id) {
 			this.siteData.tmpPointId = id;
