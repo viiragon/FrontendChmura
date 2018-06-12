@@ -1,6 +1,6 @@
 <template>
   <section class="section">
-    <h1 class="title">Mapa</h1>
+    <h1 class="title">Map</h1>
     <div id="map"></div>
     
         <b-modal :active.sync="isCardModalActive" :width="640" scroll="keep">

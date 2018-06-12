@@ -19,9 +19,9 @@
 	  <a class="navbar-item" href="/#/trips">
         Trips
       </a>
-      <a class="navbar-item" href="/#/map">
+      <!--<a class="navbar-item" href="/#/map">
         Map
-      </a>
+      </a>-->
       <a class="navbar-item" @click="logout">
         Logout
       </a>

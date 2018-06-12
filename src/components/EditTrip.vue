@@ -6,12 +6,12 @@
 				Title
 			</h1>
 			<b-field>
-				<b-input required placeholder="Name" v-model="siteData.trip.name"></b-input>
+				<b-input required placeholder="Name" v-on:input="updateData" v-model="siteData.trip.name"></b-input>
 			</b-field>
 			<h1 class="title">
 				Description
 			</h1>
-			<textarea class="textarea" input v-model="siteData.trip.description"/>
+			<textarea class="textarea" input v-on:input="updateData" v-model="siteData.trip.description"/>
 			</textarea>
 			<b-field></b-field>
 			
@@ -20,8 +20,8 @@
 			</h1>
 			<nav class="level">
 				<div class="level-left">
-					<b-datepicker v-model="siteData.trip.startDate" placeholder="Select start date" :first-day-of-week="1"></b-datepicker>
-					<b-timepicker v-model="siteData.trip.startDate" placeholder="Select start time"></b-timepicker>
+					<b-datepicker v-on:input="updateData"  v-model="siteData.trip.startDate" placeholder="Select start date" :first-day-of-week="1"></b-datepicker>
+					<b-timepicker v-on:input="updateData"  v-model="siteData.trip.startDate" placeholder="Select start time"></b-timepicker>
 				</div>
 			</nav>
 					
@@ -31,8 +31,8 @@
 			</h1>
 			<nav class="level">
 				<div class="level-left">
-					<b-datepicker v-model="siteData.trip.endDate" placeholder="Select end date" :min-date="siteData.trip.startDate" :first-day-of-week="1"></b-datepicker>
-					<b-timepicker v-model="siteData.trip.endDate" placeholder="Select end time" ></b-timepicker>
+					<b-datepicker v-on:input="updateData" v-model="siteData.trip.endDate" placeholder="Select end date" :min-date="siteData.trip.startDate" :first-day-of-week="1"></b-datepicker>
+					<b-timepicker v-on:input="updateData" v-model="siteData.trip.endDate" placeholder="Select end time" ></b-timepicker>
 				</div>
 			</nav>
 	
@@ -74,8 +74,8 @@
 						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(props.row.date).toLocaleString()}}<p></p><b-icon icon="pencil" size="is-small"></b-icon></button>
 						<nav class="level">
 							<div class="level-item">
-								<b-datepicker v-model="props.row.date" placeholder="Select Date" :first-day-of-week="1"></b-datepicker>
-								<b-timepicker v-model="props.row.date" placeholder="Select Time" ></b-timepicker></p>
+								<b-datepicker v-on:input="updatePointData(props.row)" v-model="props.row.date" placeholder="Select Date" :first-day-of-week="1"></b-datepicker>
+								<b-timepicker v-on:input="updatePointData(props.row)" v-model="props.row.date" placeholder="Select Time" ></b-timepicker></p>
 							</div>
 						</nav>
 					</b-collapse>
@@ -115,14 +115,17 @@
         	</template>
     	</b-table>
 		
-		<input class="button is-link" v-on:click="saveGPSFile" type="button" value="Save GPX file">
-		<b-upload v-model="files">
-			<a class="button is-link" id="files">
-				<b-icon icon="upload"></b-icon>
-				<span>Read GPX file</span>
-			</a>
-		</b-upload>
-		<input class="button is-link" v-on:click="" type="button" value="Show Poster">
+		<div>
+			<input class="button is-link" v-on:click="saveGPSFile" type="button" value="Save GPX file">
+			<b-upload v-model="files">
+				<a class="button is-link" id="files">
+					<b-icon icon="upload"></b-icon>
+					<span>Read GPX file</span>
+				</a>
+			</b-upload>
+			<input class="button is-link" v-on:click="" type="button" value="Show Poster">
+		</div>
+		<input class="button is-large is-danger is-pulled-right" v-on:click="deleteTrip" type="button" value="DeleteTrip">
 			
 	</div>
 	<div v-else>
@@ -164,6 +167,10 @@ export default {
 					loaded: false,
 					loadingMessage: ""
 				},
+				timeout: {
+					data: null,
+					points: []
+				},
 				tmpPointId: null
 			},
 			files: [],
@@ -204,15 +211,55 @@ export default {
 			});
 	},
 	watch: {
-		files:function(val,oldval){
+		files: function(val,oldval){
 			this.readGPSFile(this.files[0]);
 		},
-		photos:function(val,oldval){
+		photos: function(val,oldval){
 			console.log(val);
 			this.addPhoto(this.siteData.tmpPointId, this.photos[0]);
 		}
 	},
 	methods: {
+		updateData() {
+			if (this.siteData.timeout.data) {
+				clearTimeout(this.siteData.timeout.data);
+			}
+			this.siteData.timeout.data = setTimeout(() => {
+				DataService.updatePartialTrip(this.siteData.trip.tripId, this.siteData.trip)
+					.then((data) => {
+						console.log("Data updated");
+					}).catch((error) => {
+						console.log(error);
+					});
+			}, 3000);
+		},
+		updatePointData(point) {
+			var timeout = null;
+			var id = point.id;
+			for (var i = 0; i < this.siteData.timeout.points.length; i++) {
+				if (this.siteData.timeout.points[i].id == id) {
+					timeout = this.siteData.timeout.points[i];
+				}
+			}
+			if (timeout != null) {
+				clearTimeout(timeout.timeout);
+			} else {
+				timeout = { id: id, timeout: null };
+			}
+			timeout.timeout = setTimeout(() => {
+				DataService.updatePoint(this.siteData.trip.tripId, id, point)
+					.then((data) => {
+						console.log("Point id." + id + " was updated");
+						for (var i = 0; i < this.siteData.timeout.points.length; i++) {
+							if (this.siteData.timeout.points[i].id == id) {
+								this.siteData.timeout.points.splice(i, 1);
+							}
+						}
+					}).catch((error) => {
+						console.log(error);
+					});
+			}, 3000);
+		},
 		setTmpPoint(id) {
 			this.siteData.tmpPointId = id;
 		},
@@ -275,8 +322,34 @@ export default {
 				}
 			} 
 		},
-		save() {
-			console.log("Let's pretend it works OwO");
+		deleteTrip() {
+			this.$dialog.confirm({
+				message: 'Are you sure you want to delete this trip?',
+				onConfirm: () => {
+					DataService.deleteTrip(this.siteData.trip.tripId)
+						.then(() => {
+							this.$router.push('/trips');
+						}).catch((error) => {
+							var message = "";
+							if (error.response) {
+								var errorCode = error.response.status;
+								if (errorCode >= 400 && errorCode < 500) {
+									message = `Site has encountered an error. Please try again`;
+								} else {
+									message = `Unknown error occured. Please try again`;
+								}
+							} else {
+								message = `Unknown error occured. Please try again`;
+							}
+							this.$toast.open({
+								duration: 5000,
+								message: message,
+								type: 'is-danger'
+							});
+							console.log(error);
+						});
+				}
+			})
 		}, 
 		addPhoto(id,photo) {
 			console.log("test");
@@ -284,8 +357,8 @@ export default {
 				if (id == this.siteData.trip.waypoints[update].id) {
 					this.siteData.trip.waypoints[update].photo = photo;
 					console.log("Photo added");
+					break;
 				} 
-				break;
 			}
 		}, 
 		removePhoto(id) {
@@ -293,8 +366,8 @@ export default {
 				if (id == this.siteData.trip.waypoints[update].id) {
 					this.siteData.trip.waypoints[update].photo = null;
 					console.log("Photo removed");
+					break;
 				} 
-				break;
 			}
 		}, 
 		addVideo(id, video) {
@@ -302,8 +375,8 @@ export default {
 				if (id == id == this.siteData.trip.waypoints[update].id) {
 					this.siteData.trip.waypoints[update].video = video;
 					console.log("Video added");
+					break;
 				} 
-				break;
 			}
 		}, 
 		removeVideo(id) {
@@ -311,8 +384,8 @@ export default {
 				if (id == this.siteData.trip.waypoints[update].id) {
 					this.siteData.trip.waypoints[update].video = null;
 					console.log("Video removed");
+					break;
 				} 
-				break;
 			}
 		}
 	}

@@ -10,7 +10,7 @@ function getConfig() {
 			'Accept': 'application/json',
 			// 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
 			// 'Access-Control-Allow-Headers': 'Authorization',
-			// "Content-Type": "application/json",
+			"Content-Type": "application/json; charset=utf-8",
 		},
 		auth: {
 			username: localStorage.getItem('user') || '',

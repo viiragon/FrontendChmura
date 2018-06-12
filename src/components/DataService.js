@@ -3,14 +3,13 @@ import http from './HttpService.js';
 
 var nextId = 0;
 
-/*function truncate(number, part) {
-	var tens = Math.pow(10, part);
-	if (number < 0) {
-		return Math.ceil(number * tens) / tens;
-	} else {
-		return Math.floor(number * tens) / tens;
-	}
-}*/
+function encode_utf8(s) {
+  return encodeURIComponent(s);
+}
+
+function decode_utf8(s) {
+  return decodeURIComponent(s);
+}
 
 export default {
     createWaypoint: function(id, lat, lon, date) {
@@ -124,6 +123,16 @@ export default {
 			}
 		});
 	},
+	updatePoint(tripId, pointId, point) { //Podstawowe dane wycieczki bez punktów
+		var self = this;
+        return http.put("trips/" + tripId + "/waypoints/" + pointId, {
+			latitude: point.latitude,
+            longitude: point.longitude,
+            date: point.date,
+            photo: point.photo,
+            video: point.video
+		});
+	},
 	updatePartialTrip(tripId, trip) { //Podstawowe dane wycieczki bez punktów
 		var self = this;
         return http.put("trips/" + tripId, {
@@ -176,5 +185,8 @@ export default {
 					reject(error);
 				});
 		});
+	},
+	deleteTrip(tripId) {
+		return http.delete("trips/" + tripId);
 	}
 }
