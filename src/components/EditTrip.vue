@@ -234,9 +234,6 @@ export default {
 							console.log(error);
 							this.siteData.load.loaded = true;
 						});
-					/*var id = this.siteData.trip.tripId;
-					this.siteData.trip = trip;
-					trip.tripId = id;*/
 				}).catch((error) => {
 					this.$toast.open({
 						duration: 5000,
@@ -251,18 +248,30 @@ export default {
 		},
 		addWaypoint(point) {
 			console.log(point)
-			this.siteData.trip.waypoints.push(DataService.createWaypoint(
-				point.lat, 
-				point.lng,
-				point.date
-			));
+			DataService.postWaypoint(this.siteData.trip.tripId, DataService.createWaypointFromMap(point))
+				.then((data) => {					
+					this.siteData.trip.waypoints.push(DataService.createWaypoint(
+						data.waypointId,
+						data.latitude, 
+						data.longitude,
+						data.date
+					));
+				}).catch((error) => {
+					console.log(error);
+				})
 		},
 		deleteWaypoint(id) {	
 			console.log(this.siteData.trip.waypoints);
-			for (var update = 0; update<this.siteData.trip.waypoints.length; update++){
+			for (var update = 0; update < this.siteData.trip.waypoints.length; update++){
 				if (id == this.siteData.trip.waypoints[update].id) {
-					this.siteData.trip.waypoints.splice(update, 1);
-					console.log("Waypoint id." + id + " removed");
+					DataService.deleteWaypoint(this.siteData.trip.tripId, id)
+						.then(() => {
+							this.siteData.trip.waypoints.splice(update, 1);
+							console.log("Waypoint id." + id + " removed");
+						}).catch((error) => {
+							console.log(error);
+						});
+					break;
 				}
 			} 
 		},
@@ -271,39 +280,39 @@ export default {
 		}, 
 		addPhoto(id,photo) {
 			console.log("test");
-			for (var update = 0; update<this.siteData.trip.waypoints.length; update++)
-			{
-			if (id == this.siteData.trip.waypoints[update].id) {
-				this.siteData.trip.waypoints[update].photo = photo;
-				console.log("Photo added");
-			} 
+			for (var update = 0; update < this.siteData.trip.waypoints.length; update++) {
+				if (id == this.siteData.trip.waypoints[update].id) {
+					this.siteData.trip.waypoints[update].photo = photo;
+					console.log("Photo added");
+				} 
+				break;
 			}
 		}, 
 		removePhoto(id) {
-			for (var update = 0; update<this.siteData.trip.waypoints.length; update++)
-			{
-			if (id == this.siteData.trip.waypoints[update].id) {
-				this.siteData.trip.waypoints[update].photo = null;
-				console.log("Photo removed");
-			} 
+			for (var update = 0; update < this.siteData.trip.waypoints.length; update++) {
+				if (id == this.siteData.trip.waypoints[update].id) {
+					this.siteData.trip.waypoints[update].photo = null;
+					console.log("Photo removed");
+				} 
+				break;
 			}
 		}, 
 		addVideo(id, video) {
-			for (var update = 0; update<this.siteData.trip.waypoints.length; update++)
-			{		
-			if (id == id == this.siteData.trip.waypoints[update].id) {
-				this.siteData.trip.waypoints[update].video = video;
-				console.log("Video added");
-			} 
+			for (var update = 0; update < this.siteData.trip.waypoints.length; update++) {		
+				if (id == id == this.siteData.trip.waypoints[update].id) {
+					this.siteData.trip.waypoints[update].video = video;
+					console.log("Video added");
+				} 
+				break;
 			}
 		}, 
 		removeVideo(id) {
-			for (var update = 0; update<this.siteData.trip.waypoints.length; update++)
-			{	
-			if (id == this.siteData.trip.waypoints[update].id) {
-				this.siteData.trip.waypoints[update].video = null;
-				console.log("Video removed");
-			} 
+			for (var update = 0; update < this.siteData.trip.waypoints.length; update++) {	
+				if (id == this.siteData.trip.waypoints[update].id) {
+					this.siteData.trip.waypoints[update].video = null;
+					console.log("Video removed");
+				} 
+				break;
 			}
 		}
 	}

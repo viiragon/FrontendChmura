@@ -3,13 +3,32 @@ import http from './HttpService.js';
 
 var nextId = 0;
 
+/*function truncate(number, part) {
+	var tens = Math.pow(10, part);
+	if (number < 0) {
+		return Math.ceil(number * tens) / tens;
+	} else {
+		return Math.floor(number * tens) / tens;
+	}
+}*/
+
 export default {
-    createWaypoint: function(lat, lon, date) {
+    createWaypoint: function(id, lat, lon, date) {
         return {
-            id: nextId++,
+            id: id,
             latitude: lat,
             longitude: lon,
             date: date,
+            photo: null,
+            video: null
+        };
+    },
+    createWaypointFromMap: function(point) {
+        return {
+            id: 0,
+            latitude: point.lat,
+            longitude: point.lng,
+            date: point.date,
             photo: null,
             video: null
         };
@@ -32,10 +51,10 @@ export default {
             var waypoints = [];
             for (var i = 0; i < data.waypoints.length; i++) {
                 var point = self.createWaypoint(
+					data.waypoints[i].waypointId,
                     data.waypoints[i].latitude, 
                     data.waypoints[i].longitude,
                     new Date(data.waypoints[i].date));
-                point.id = data.waypoints[i].waypointId;
                 waypoints.push(point);
             }
             var trip = self.createTrip(
