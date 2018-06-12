@@ -107,7 +107,7 @@ export default {
 						}
 						wayPoints.push(
 							DataService.createWaypoint(
-								0,
+								DataService.getNextId(),
 								parseFloat(point.attributes.lat.nodeValue),
 								parseFloat(point.attributes.lon.nodeValue),
 								date

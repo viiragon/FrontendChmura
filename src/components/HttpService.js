@@ -9,9 +9,9 @@ function getConfig() {
 			'Access-Control-Allow-Origin': '*',
 			// 'Authorization': 'Basic YWRtaW46MTIzNA==',
 			'Accept': 'application/json',
-			'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+			//'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
 			// 'Access-Control-Allow-Headers': 'Authorization',
-			"Content-Type": "application/json; charset=utf-8",
+			//"Content-Type": "application/json; charset=utf-8",
 		},
 		auth: {
 			username: localStorage.getItem('user') || '',

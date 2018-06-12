@@ -25,6 +25,9 @@ function decode_utf8(s) {
 }
 
 export default {
+	getNextId: function() {
+		return nextId++;
+	},
     createWaypoint: function(id, lat, lon, date) {
         return {
             id: id,
@@ -37,7 +40,7 @@ export default {
     },
     createWaypointFromMap: function(point) {
         return {
-            id: 0,
+            id: nextId++,
             latitude: point.lat,
             longitude: point.lng,
             date: point.date,
@@ -127,8 +130,8 @@ export default {
 						.then((data) => {
 							checkFunction(true);
 						}).catch((error) => {
-							checkFunction(false);
-							reject(error);
+							console.log(error)
+							checkFunction(error.response.status == 404);
 						});
 				}
 			} else {
