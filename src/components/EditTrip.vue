@@ -19,7 +19,7 @@
 				Start of trip
 			</h1>
 			<b-collapse :open="false">
-						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(siteData.trip.start).toLocaleString()}}<p></p><b-icon icon="pencil" size="is-small"></b-icon></button>
+						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(siteData.trip.start).toLocaleString()}}<p></p><b-icon icon="edit" size="is-small"></b-icon></button>
 						<nav class="level">
 						<div class="level-left">
 							<b-datepicker v-on:input="updateData"  v-model="siteData.trip.start" placeholder="Select start date" :first-day-of-week="1"></b-datepicker>
@@ -32,7 +32,7 @@
 				End of trip
 			</h1>
 			<b-collapse :open="false">
-						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(siteData.trip.end).toLocaleString()}}<p></p><b-icon icon="pencil" size="is-small"></b-icon></button>
+						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(siteData.trip.end).toLocaleString()}}<p></p><b-icon icon="edit" size="is-small"></b-icon></button>
 						<nav class="level">
 						<div class="level-left">
 							<b-datepicker v-on:input="updateData" v-model="siteData.trip.end" placeholder="Select end date" :min-date="siteData.trip.startDate" :first-day-of-week="1"></b-datepicker>
@@ -75,7 +75,7 @@
 				
 				<b-table-column field="date" label="Date" sortable centered>
 					<b-collapse :open="false">
-						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(props.row.date).toLocaleString()}}<p></p><b-icon icon="pencil" size="is-small"></b-icon></button>
+						<button class="button is-white" size="is-small" slot="trigger">{{ new Date(props.row.date).toLocaleString()}}<p></p><b-icon icon="edit" size="is-small"></b-icon></button>
 						<nav class="level">
 							<div class="level-item">
 								<b-datepicker v-on:input="updatePointData(props.row)" v-model="props.row.date" placeholder="Select Date" :first-day-of-week="1"></b-datepicker>
@@ -128,7 +128,10 @@
 				</a>
 			</b-upload>
 			<input class="button is-link" v-on:click="" type="button" value="Show Poster">
-			<input class="button is-danger is-pulled-right" v-on:click="deleteTrip" type="button" value="DeleteTrip">
+		</div>
+		
+		<div>
+			<input class="button is-danger is-pulled-right" v-on:click="deleteTrip"  type="button" value="Delete Trip" style="margin-left: 5px"> 
 			<input class="button is-link is-pulled-right" v-on:click="updateAll" type="button" value="Save Trip">
 		</div>
 			
