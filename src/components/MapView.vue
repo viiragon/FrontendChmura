@@ -26,7 +26,9 @@ export default {
       isCardModalActive: false,
       flightPlanCoordinates: [],
       map: null,
-      clickedWaypoint: null
+      clickedWaypoint: null,
+      markers: [],
+      flightPath: []
     };
   },
   created: function() {
@@ -54,7 +56,15 @@ export default {
     onMapClickEvent: function(event) {
         this.addWaypoint(event);
     },
+    clearMarkers: function() {
+        this.markers.forEach(marker => {
+            marker.setMap(null);
+        });
+    },
     addWaypointsToMap: function(waypoints, map) {
+        this.clearMarkers();
+        this.clearPath();
+
         waypoints.forEach(waypoint => {
             this.placeMarkerOnMap(new google.maps.LatLng({
                 lat: waypoint.latitude,
@@ -80,11 +90,17 @@ export default {
 
         this.placeMarkerOnMap(event.latLng, this.map);
     },
-    removeWaypoint: function(waypointId) {
-        console.log(waypointId);
-        this.$emit("remove-waypoint", waypointId);
+    removeWaypoint: function(waypoint) {
+        waypoint.setMap(null);
+        this.$emit("remove-waypoint", waypoint.get("id"));
 
         // http.delete(`trips/${this.tripId}/waypoints/${waypointId}`);
+    },
+    clearPath() {
+        if (this.flightPath.length == 0)
+            return;
+        this.flightPath.setMap(null);
+        this.flightPlanCoordinates = [];
     },
     activateModal: function(e) {
       console.log(this.isCardModalActive);
@@ -97,16 +113,20 @@ export default {
             position: location,
             map: map
         });
+        this.markers.push(marker);
+        this.markers[this.markers.length - 1].setMap(map);
+        if(this.flightPath && this.flightPath.visible)
+            this.flightPath.setMap(null);
 
         this.flightPlanCoordinates.push(location);
-        var flightPath = new google.maps.Polyline({
+        this.flightPath = new google.maps.Polyline({
             path: this.flightPlanCoordinates,
             strokeColor: "#FF0000",
             strokeOpacity: 1.0,
             strokeWeight: 2
         });
 
-        flightPath.setMap(map);
+        this.flightPath.setMap(map);
         google.maps.event.addListener(marker, "click", () => {
             this.activateModal(marker);
             //this.removeWaypoint(markerId)
