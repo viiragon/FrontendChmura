@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+//http://104.41.220.226:8080
 var mainUrl = "http://104.41.220.226:8080/api/";
 
 function getConfig() { 
@@ -8,7 +9,7 @@ function getConfig() {
 			'Access-Control-Allow-Origin': '*',
 			// 'Authorization': 'Basic YWRtaW46MTIzNA==',
 			'Accept': 'application/json',
-			// 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+			'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
 			// 'Access-Control-Allow-Headers': 'Authorization',
 			"Content-Type": "application/json; charset=utf-8",
 		},

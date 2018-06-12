@@ -231,7 +231,7 @@ export default {
 					}).catch((error) => {
 						console.log(error);
 					});
-			}, 3000);
+			}, 1000);
 		},
 		updatePointData(point) {
 			var timeout = null;
@@ -258,7 +258,7 @@ export default {
 					}).catch((error) => {
 						console.log(error);
 					});
-			}, 3000);
+			}, 1000);
 		},
 		setTmpPoint(id) {
 			this.siteData.tmpPointId = id;
