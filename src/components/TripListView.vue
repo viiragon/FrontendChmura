@@ -25,7 +25,7 @@
 		</b-table>
 		</br>
 		<div id="new-trip-div">
-			<a class="button is-inverted is-focused" href="/#/trip/0">
+			<a class="button is-inverted is-focused" @click="addTrip" >
 			Create new trip
 			</a>
 		</div>
@@ -48,6 +48,11 @@
 		methods: {
 			rowClickedHandler(row){
 				window.location = '/#/trip/' + row.tripId;
+			},
+			addTrip(){
+				http.post("trips", {name: ''}).then((data) => {
+					window.location = '/#/trip/' + data.tripId;
+				});
 			}
 		},
 		mounted () {
