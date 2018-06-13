@@ -218,21 +218,26 @@ export default {
 		return http.delete("trips/" + tripId);
 	},
 
-	createPoster(tripId){
+	createPoster(tripId, btn){
 		http.post("trips/" + tripId + "/poster").then(posterUrl => {
 			console.log(posterUrl);
-		});
+			return getPosterLongPolling(tripId, btn);
+		})
 	},
 
 	getPoster(tripId){
-		http.get("trips/" + tripId + "/presentation").then(posterUrl => {
+		http.get("trips/" + tripId + "/poster").then(posterUrl => {
 			window.open(posterUrl);
+		});
+		http.get("trips/" + tripId ).then(data => {
+			console.log(data);
 		});
 	},
 
-	createPresentation(tripId){
+	createPresentation(tripId, btn){
 		http.post("trips/" + tripId + "/presentation").then(presUrl => {
 			console.log(presUrl);
+			return getPresentationLongPolling(tripId, btn);
 		});
 	},
 
@@ -240,5 +245,64 @@ export default {
 		http.get("trips/" + tripId + "/presentation").then(presUrl => {
 			window.open(presUrl);
 		});
+	},
+	
+	updateButtons(tripId, posterbtn, presentationbtn){
+		http.get("trips/" + tripId + "/poster").then(data => {
+			if(data != ""){
+				posterbtn.disabled = false;
+			}
+		});
+		http.get("trips/" + tripId + "/presentation").then(data => {
+			if(data != ""){
+				presentationbtn.disabled = false;
+			}
+		});
 	}
+}
+
+var posterInterval;
+var presInterval;
+
+function getPosterLongPolling(tripId, btn){
+	http.get("trips/" + tripId + "/poster").then(data => {
+			console.log('1st poll poster');
+		});
+	posterInterval = setInterval(function () {
+      getPoster(tripId, btn);
+    }.bind(this), 3000); 
+}
+
+function getPoster(tripId, btn){
+	http.get("trips/" + tripId + "/poster").then(data => {
+		console.log(data);
+		if(data != ""){
+			console.log(data);
+			clearInterval(posterInterval);
+			btn.disabled = false;
+			return true;
+		}
+	});
+
+}
+
+function getPresentationLongPolling(tripId, btn){
+	http.get("trips/" + tripId + "/presentation").then(data => {
+			console.log('1st poll presentation');
+		});
+	presInterval = setInterval(function () {
+      getPresentation(tripId, btn);
+    }.bind(this), 3000); 
+}
+
+function getPresentation(tripId, btn){
+	http.get("trips/" + tripId + "/presentation").then(data => {
+		console.log(data);
+		if(data != ""){
+			console.log(data);
+			clearInterval(presInterval);
+			btn.disabled = false;
+			return true;
+		}
+	});
 }

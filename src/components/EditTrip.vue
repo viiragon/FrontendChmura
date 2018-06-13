@@ -142,11 +142,11 @@
 		</p>
 		<p>
 			<input class="button is-link t-gap" v-on:click="createPoster" type="button" value="Create Poster">
-			<input id="poster-btn" class="button is-link t-gap" v-on:click="getPoster" type="button" value="Download Poster" disabled>
+			<input id="poster-btn" ref="posterbtn" class="button is-link t-gap" v-on:click="getPoster" type="button" value="Download Poster" disabled>
 		</p>
 		<p>
 			<input class="button is-link t-gap" v-on:click="createPresentation" type="button" value="Create Presentation">
-			<input id="presentation-btn" class="button is-link t-gap" v-on:click="getPresentation" type="button" value="Download Presentation" disabled>
+			<input id="presentation-btn" ref="presentationbtn" class="button is-link t-gap" v-on:click="getPresentation" type="button" value="Download Presentation" disabled>
 		</p>
 			
 	</div>
@@ -232,6 +232,8 @@ export default {
 				}
 				console.log(error);
 			});
+
+			DataService.updateButtons(tripId, 	this.$refs.posterbtn,this.$refs.presentationbtn);
 	},
 	watch: {
 		files: function(val,oldval){
@@ -446,13 +448,13 @@ export default {
 			}
 		},
 		createPoster(){
-			DataService.createPoster(this.siteData.trip.tripId);
+			DataService.createPoster(this.siteData.trip.tripId, this.$refs.posterbtn);
 		},
 		getPoster(){
 			DataService.getPoster(this.siteData.trip.tripId);
 			},
 		createPresentation(){
-			DataService.createPresentation(this.siteData.trip.tripId);
+			DataService.createPresentation(this.siteData.trip.tripId, this.$refs.presentationbtn);
 		},
 		getPresentation(){
 			DataService.getPresentation(this.siteData.trip.tripId);
