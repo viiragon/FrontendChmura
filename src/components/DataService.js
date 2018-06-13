@@ -52,13 +52,6 @@ export default {
             video: null
         };
     },
-    createPhoto: function(id, data, url) {
-        return {
-            id: id,
-            data: data,
-            url: url
-        };
-    },
     createTrip: function(id, name, description, startDate, endDate, waypoints) {
         return {
 			tripId: id,
@@ -82,8 +75,15 @@ export default {
                     data.waypoints[i].latitude, 
                     data.waypoints[i].longitude,
                     new Date(data.waypoints[i].date));
+				if (data.waypoints[i].photos.length > 0) {
+					point.photo = data.waypoints[i].photos[0];
+					console.log(point.photo);
+				}
                 waypoints.push(point);
             }
+			waypoints.sort((a, b) => {
+				return a.date - b.date;
+			});
             var trip = self.createTrip(
                 data.tripId,
                 data.name, 
@@ -96,11 +96,11 @@ export default {
         }).catch(error => {
             console.log(error);	
             
-            GPXService.getMock()
+            /*GPXService.getMock()
                 .then(trip => {
                     return trip;
                     console.log(trip);
-                });
+                });*/
         });
     },
 	postWaypoint(tripId, point) {
@@ -108,8 +108,8 @@ export default {
             latitude: point.latitude,
             longitude: point.longitude,
             date: point.date,
-            photo: point.photo,
-            video: point.video
+            photo: [],
+            video: []
 		});
 	},
 	deleteWaypoint(tripId, pointId) {

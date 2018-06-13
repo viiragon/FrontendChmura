@@ -90,9 +90,11 @@
 			<template slot="detail" slot-scope="props">
 				<article class="media">
 					<figure class="media-left">
-						<p class="image is-128x128">
-							<img src="https://www.sydney.com/sites/sydney/files/styles/gallery_full_width/public/2017-12/Jacarandas%20in%20Spring%20bloom%2C%20Royal%20Botanic%20Garden%2C%20Sydney.jpg?itok=zpohBz_j">
-						</p>
+						<div v-if="props.row.photo != null">
+							<p class="image is-64x64">
+								<img :src="props.row.photo.url" v-on:click="showPhoto(props.row)">
+							</p>
+						</div>
 					</figure>    
 							
 						<div class="buttons">
@@ -224,14 +226,28 @@ export default {
 			this.readGPSFile(this.files[0]);
 		},
 		photos: function(val,oldval){
-			console.log(val);
 			var formData = new FormData();
+			var str = `{"waypointId": "` + this.siteData.tmpPointId + `","date": "` + new Date().getTime() + `"}`;
+			console.log(str);
+			formData.append("photoInfo", str);
 			formData.append("photo", this.photos[0]);
-			var photo = DataService.createPhoto(DataService.getNextPhotoId(), formData, "")
-			this.addPhoto(this.siteData.tmpPointId, photo);
+			//var photo = DataService.createPhoto(DataService.getNextPhotoId(), formData, "")
+			//this.addPhoto(this.siteData.tmpPointId, photo);
+			http.postForm("/trips/" + this.siteData.trip.tripId + "/photos", formData)
+				.then((data) => {
+					if (data != "failed") {
+						console.log(data);
+						this.addPhoto(this.siteData.tmpPointId, {url: data});
+					}
+				}).catch((error) => {
+					console.log(error);
+				});
 		}
 	},
 	methods: {
+		showPhoto(point) {
+			window.open(point.photo.url,"_self");
+		},
 		updateAll() {
 			//DataService.updateWholeTrip(this.siteData.trip, this.siteData.trip)
 			DataService.updatePartialTrip(this.siteData.trip.tripId, this.siteData.trip)
