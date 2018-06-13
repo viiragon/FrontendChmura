@@ -233,7 +233,17 @@ export default {
 				console.log(error);
 			});
 
-			DataService.updateButtons(tripId, 	this.$refs.posterbtn,this.$refs.presentationbtn);
+			//DataService.updateButtons(tripId, 	//this.$refs.posterbtn,this.$refs.presentationbtn);
+			http.get("trips/" + tripId + "/poster").then(data => {
+			if(data != ""){
+				this.$refs.posterbtn.disabled = false;
+			}
+		});
+		http.get("trips/" + tripId + "/presentation").then(data => {
+			if(data != ""){
+				this.$refs.presentationbtn.disabled = false;
+			}
+		});
 	},
 	watch: {
 		files: function(val,oldval){
