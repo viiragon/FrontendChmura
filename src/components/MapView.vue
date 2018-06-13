@@ -4,7 +4,7 @@
     <div id="map"></div>
     
         <b-modal :active.sync="isCardModalActive" :width="640" scroll="keep">
-            <map-modal :isCardModalActive.sync="isCardModalActive" :waypoint="clickedWaypoint" @remove-waypoint="removeWaypoint" has-modal-card>
+            <map-modal  :waypoint="clickedWaypoint" :all-waypoints="sortedWaypoints" @remove-waypoint="removeWaypoint"  @update-waypoint="updateWaypoint" has-modal-card>
         </map-modal>
         
         </b-modal>
@@ -14,6 +14,8 @@
 <script>
 import MapModal from "./MapModal";
 import http from "./HttpService.js";
+
+import DataService from './DataService.js';
 
 export default {
   name: "MapView",
@@ -41,20 +43,28 @@ export default {
       map: function(map) {
         map.addListener('click', this.onMapClickEvent);
         if (this.waypoints)
-            this.addWaypointsToMap(this.waypoints, map);
+            this.addWaypointsToMap(this.sortedWaypoints, map);
       },
       waypoints: function(waypoints) {  
         if (this.map)
-            this.addWaypointsToMap(waypoints, this.map);
+            this.addWaypointsToMap(this.sortedWaypoints, this.map);
         
       },
       tripId: function(tripId) {
           console.log("tripId", tripId)
       }
   },
+  computed: {
+      sortedWaypoints: function() {
+          return this.waypoints.sort((a, b) => {
+              return new Date(a.date).getTime() - new Date(b.date).getTime();
+          });
+      }
+  },
   methods: {
     onMapClickEvent: function(event) {
         this.addWaypoint(event);
+        // this.clearPath();
     },
     clearMarkers: function() {
         this.markers.forEach(marker => {
@@ -75,12 +85,6 @@ export default {
         });
     },
     addWaypoint: function(event) {
-        // http.post(`trips/${this.tripId}/waypoints`, {
-        //   date: new Date(),
-        //   latitude: event.latLng.lat(),
-        //   longitude: event.latLng.lng()
-        // });
-        
         this.$emit("point-added", {
             id: Math.random() * 100000,
             lng: event.latLng.lng(),
@@ -90,16 +94,41 @@ export default {
 
         this.placeMarkerOnMap(event.latLng, this.map);
     },
+    updateWaypoint: function(waypoint, nextWaypoint) {
+        
+		DataService.updatePoint(this.tripId, waypoint.id, {
+            longitude: waypoint.longitude,
+            latitude: waypoint.latitude,
+            date: nextWaypoint ? new Date(new Date(nextWaypoint.date).getTime() - 10) : waypoint.date
+        }).then(() => {
+            if (nextWaypoint) {
+                return DataService.updatePoint(this.tripId, nextWaypoint.id, {
+                    longitude: nextWaypoint.longitude,
+                    latitude: nextWaypoint.latitude,
+                    date: new Date(nextWaypoint.date).getTime() + 10
+                });
+            } else {
+                return 1;
+            }
+        }).then(() => {
+            return DataService.getTrip(this.tripId)
+			
+        }).then(trip => {
+            console.log(trip)
+            this.waypoints = trip.waypoints;
+        });
+
+        
+    },
     removeWaypoint: function(waypoint) {
         waypoint.setMap(null);
+        
+      console.log(waypoint.get("id"));
         this.$emit("remove-waypoint", waypoint.get("id"));
 
         // http.delete(`trips/${this.tripId}/waypoints/${waypointId}`);
     },
     clearPath() {
-        if (this.flightPath.length == 0)
-            return;
-        this.flightPath.setMap(null);
         this.flightPlanCoordinates = [];
     },
     activateModal: function(e) {
