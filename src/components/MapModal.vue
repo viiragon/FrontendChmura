@@ -27,10 +27,10 @@
 					<h3>Edytuj zdjęcia</h3>
 				</div>
 				<div class="columns" style="150px">
-					<div class="column" v-for="url in imageUrls" :key="url" @click="isImageModalActive = true">
-						<div :style="{ 'background-image': 'url(' + url + ')', 'height': '150px',  'background-position': 'center', 'background-size': 'cover'}"></div>
+					<div class="column" v-for="url in imageUrls" :key="url" @click="$parent.close();isImageModalActive = true">
+						<div :style="{ 'background-image': 'url(' + url + ')', 'height': '300px','width': '550px',  'background-position': 'top center', 'background-size': 'cover'}"></div>
 						<b-modal :active.sync="isImageModalActive">
-							<p class="image is-4by3">
+							<p class="image is-4by3" @click="$parent.close()">
 								<img :src="url">
 							</p>
 						</b-modal>
@@ -135,8 +135,9 @@ export default {
 	},
 	mounted:function() {
 var photo = this.waypoint.get("photo") || [];
-this.imageUrls = photo;
+this.imageUrls = [photo.url];
 			console.log("wayp", photo);
+			console.log(this.imageUrls)
 	},
 	watch: {
 		tripId: function() {
