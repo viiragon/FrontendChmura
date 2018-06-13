@@ -5,7 +5,7 @@
 	<form action="">
 		<div class="modal-card" style="width: auto">
 			<header class="modal-card-head">
-				<p v-if="isEdit==false" class="modal-card-title">{{title}}</p>
+				<p v-if="isEdit==false" class="modal-card-title">Waypoint id: {{waypoint.get("id")}}</p>
 				<b-input v-if="isEdit==true" v-model="title"></b-input>
 			</header>
 			<section class="modal-card-body">
@@ -14,12 +14,12 @@
 						
 					</h3>
 					<b-field>
-							<b-select placeholder="Nazwa punktu">
+							<b-select placeholder="Nazwa punktu" v-model="previousMarker">
 								<option
-									v-for="option in otherPoints"
-									:value="option.id"
+									v-for="option in allWaypoints"
+									:value="option"
 									:key="option.id">
-									{{ option.name }}
+									{{ option.id }}
 								</option>
 							</b-select>
 						</b-field>
@@ -87,7 +87,7 @@
 				<button class="button" type="button" @click="$parent.close()">Zamknij</button>
 				<button v-if="isEdit==true" @click="deleteWaypoint()" class="button is-danger">Usuń</button>
 				<button v-if="isEdit==false" @click="isEdit=true" class="button is-info">Edytuj</button>
-				<button v-if="isEdit==true" @click="isEdit=false" class="button is-info">Zapisz</button>
+				<button v-if="isEdit==true" @click="savePoint()" class="button is-info">Zapisz</button>
 			</footer>
 		</div>
 	</form>
@@ -99,15 +99,15 @@
 
 import http from "./HttpService.js";
 
+import DataService from './DataService.js';
+
 export default {
   name: "MapModal",
-  props: ["isCardModalActive", ""],
+  props: ["isCardModalActive", "waypoint", "allWaypoints"],
   methods: {
     open: function() {
-      this.isCardModalActive = true;
     },
     close: function() {
-      this.isCardModalActive = false;
     },
     deleteDropFile(index) {
       this.dropFiles.splice(index, 1);
@@ -117,22 +117,43 @@ export default {
 		
 		this.$emit("remove-waypoint", this.waypoint);
 		this.$parent.close();
-    }
-  },
-  props: ["waypoint"],
+		}, 
+		savePoint: function() {
+			this.isEdit = false;
+			console.log(this.previousMarker)
+			var point = {
+				id: this.waypoint.get("id"),
+            longitude: this.waypoint.getPosition().lng(),
+            latitude: this.waypoint.getPosition().lat(),
+            date: this.waypoint.get("date")
+        }
+			this.$emit("update-waypoint", point, this.previousMarker);
+			
+		this.$parent.close();
+		}
+	},
+	mount:function() {
+
+			console.log("wayp", this.allWaypoints);
+	},
+	watch: {
+		allWaypoints: function(way) {
+			console.log("wayp", way);
+		}
+	},
   data() {
     return {
       dropFiles: [],
 
       otherPoints: [{ name: "Punkt Początkowy", id: 44 }],
       isEdit: false,
-
+	previousMarker: null,
       isImageModalActive: false,
       imageUrls: [
         "https://www.sydney.com/sites/sydney/files/styles/gallery_full_width/public/2017-12/Jacarandas%20in%20Spring%20bloom%2C%20Royal%20Botanic%20Garden%2C%20Sydney.jpg?itok=zpohBz_j",
         "https://www.adventure24.pl/upload/products/australia-objazd--gora-kosciuszki-1354716105.jpg"
       ],
-      title: "Punkt w Australii",
+      title: "Przykładowa nazwa",
       description:
         "Curabitur accumsan turpis pharetra <strong>augue tincidunt</strong> blandit. Quisque condimentum maximus mi, sit amet commodo arcu rutrum id. Proin pretium urna vel cursus venenatis. Suspendisse potenti. Etiam mattis sem rhoncus lacus dapibus facilisis. Donec at dignissim dui. Ut et neque nisl."
     };
