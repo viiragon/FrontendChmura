@@ -28,12 +28,12 @@
 				</div>
 				<div class="columns" style="150px">
 					<div class="column" v-for="url in imageUrls" :key="url" @click="$parent.close();isImageModalActive = true">
-						<div :style="{ 'background-image': 'url(' + url + ')', 'height': '300px','width': '550px',  'background-position': 'top center', 'background-size': 'cover'}"></div>
-						<b-modal :active.sync="isImageModalActive">
+						<img :src="url" :style="{ 'width': '550px',  'background-position': 'top center', 'background-size': 'cover'}"></img>
+						<!-- <b-modal :active.sync="isImageModalActive">
 							<p class="image is-4by3" @click="$parent.close()">
 								<img :src="url">
 							</p>
-						</b-modal>
+						</b-modal> -->
 					</div>     
 					<div class="column" v-if="isEdit==true">
 						<b-upload v-model="dropFiles"
