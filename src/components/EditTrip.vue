@@ -98,12 +98,14 @@
 					</figure>    
 							
 						<div class="buttons">
-							<b-upload v-model="photos">
-								<a class="button is-success" v-on:click="setTmpPoint(props.row.id)" id="photos">
+							<div v-on:click="setTmpPoint(props.row.id)">
+							<b-upload v-model="photos" v-bind:disabled="props.row.photo != null">
+								<a class="button is-success" id="photos" v-bind:disabled="props.row.photo != null">
 									<b-icon icon="upload"></b-icon>
 									<span>Add Photo</span>
 								</a>
 							</b-upload>
+							</div>
 							<!--<button  @click="addPhoto" class="button is-success">Add Photo</button>-->
 							<button  @click="removePhoto" class="button is-danger">Remove Photo</button>
 							<!--<button  @click="addVideo" class="button is-success">Add Movie</button>
@@ -248,9 +250,12 @@ export default {
 					if (data != "failed") {
 						console.log(data);
 						this.addPhoto(this.siteData.tmpPointId, {url: data});
+						this.siteData.tmpPointId = null;
 					}
 				}).catch((error) => {
+					this.$dialog.alert('An error occured. Please try again')
 					console.log(error);
+					this.siteData.tmpPointId = null;
 				});
 		}
 	},
@@ -353,6 +358,9 @@ export default {
 						data.longitude,
 						new Date(data.date)
 					));
+					this.siteData.trip.waypoints.sort((a, b) => {
+						return a.date - b.date;
+					});
 				}).catch((error) => {
 					console.log(error);
 				})
@@ -402,8 +410,7 @@ export default {
 			})
 		}, 
 		addPhoto(id,photo) {
-			console.log("test");
-			for (var update = 0; update < this.siteData.trip.waypoints.length; update++) {
+			for (var update = 0; update < this.siteData.trip.waypoints.length; update++) {		
 				if (id == this.siteData.trip.waypoints[update].id) {
 					this.siteData.trip.waypoints[update].photo = photo;
 					console.log("Photo added");

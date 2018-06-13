@@ -68,7 +68,7 @@ export default {
             .then((data) => {
 
             var waypoints = [];
-			console.log(data.waypoints);
+			console.log(data.poster);
             for (var i = 0; i < data.waypoints.length; i++) {
                 var point = self.createWaypoint(
 					data.waypoints[i].waypointId,
@@ -77,7 +77,6 @@ export default {
                     new Date(data.waypoints[i].date));
 				if (data.waypoints[i].photos.length > 0) {
 					point.photo = data.waypoints[i].photos[0];
-					console.log(point.photo);
 				}
                 waypoints.push(point);
             }
