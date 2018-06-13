@@ -4,7 +4,7 @@
     <div id="map"></div>
     
         <b-modal :active.sync="isCardModalActive" :width="640" scroll="keep">
-            <map-modal  :waypoint="clickedWaypoint" :all-waypoints="sortedWaypoints" @remove-waypoint="removeWaypoint"  @update-waypoint="updateWaypoint" has-modal-card>
+            <map-modal :tripId="tripId" :waypoint="clickedWaypoint" :all-waypoints="sortedWaypoints" @remove-waypoint="removeWaypoint"  @update-waypoint="updateWaypoint" has-modal-card>
         </map-modal>
         
         </b-modal>
@@ -80,7 +80,7 @@ export default {
                 lat: waypoint.latitude,
                 lng: waypoint.longitude
                 }), 
-                waypoint.id, 
+                waypoint, 
                 map);
         });
     },
@@ -99,6 +99,7 @@ export default {
 		DataService.updatePoint(this.tripId, waypoint.id, {
             longitude: waypoint.longitude,
             latitude: waypoint.latitude,
+            photo: waypoint.photo,
             date: nextWaypoint ? new Date(new Date(nextWaypoint.date).getTime() - 10) : waypoint.date
         }).then(() => {
             if (nextWaypoint) {
@@ -137,7 +138,7 @@ export default {
       this.clickedWaypoint = e;
       this.isCardModalActive = true;
     },
-    placeMarkerOnMap: function(location, markerId, map) {
+    placeMarkerOnMap: function(location, waypoint, map) {
         var marker = new google.maps.Marker({
             position: location,
             map: map
@@ -161,7 +162,10 @@ export default {
             //this.removeWaypoint(markerId)
         });
 
-        marker.set("id", markerId);
+        marker.set("id", waypoint.id);
+        marker.set("date", waypoint.date);
+        marker.set("photo", waypoint.photo)
+        console.log(waypoint.photo)
         // console.log("click", location, markerId);
 
         return marker;

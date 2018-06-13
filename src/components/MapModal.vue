@@ -1,7 +1,6 @@
 
 <template>
 <div>
-{{isCardModalActive}}
 	<form action="">
 		<div class="modal-card" style="width: auto">
 			<header class="modal-card-head">
@@ -103,7 +102,7 @@ import DataService from './DataService.js';
 
 export default {
   name: "MapModal",
-  props: ["isCardModalActive", "waypoint", "allWaypoints"],
+  props: ["waypoint", "allWaypoints", "tripId"],
   methods: {
     open: function() {
     },
@@ -111,6 +110,7 @@ export default {
     },
     deleteDropFile(index) {
       this.dropFiles.splice(index, 1);
+      this.imageUrls.splice(index, 1);
     },
     deleteWaypoint: function() {
 		this.isEdit=false;
@@ -125,20 +125,45 @@ export default {
 				id: this.waypoint.get("id"),
             longitude: this.waypoint.getPosition().lng(),
             latitude: this.waypoint.getPosition().lat(),
-            date: this.waypoint.get("date")
+						date: this.waypoint.get("date"),
+						photo: this.waypoint.get("photo")
         }
 			this.$emit("update-waypoint", point, this.previousMarker);
 			
 		this.$parent.close();
 		}
 	},
-	mount:function() {
-
-			console.log("wayp", this.allWaypoints);
+	mounted:function() {
+var photo = this.waypoint.get("photo") || [];
+this.imageUrls = photo;
+			console.log("wayp", photo);
 	},
 	watch: {
-		allWaypoints: function(way) {
-			console.log("wayp", way);
+		tripId: function() {
+			console.log(tripId)
+			var photo = this.waypoint.get("photo") || [];
+						console.log(photo);
+						this.waypoint.set("photo", [...photo, data]);
+		},
+		dropFiles: function(files) {
+			var formData = new FormData();
+			var str = `{"waypointId": "` + this.waypoint.get("id") + `","date": "` + new Date().getTime() + `"}`;
+			console.log(str);
+			formData.append("photoInfo", str);
+			formData.append("photo", files[0]);
+	var self = this;
+			http.postForm("/trips/" + self.tripId + "/photo", formData)
+				.then((data) => {
+					if (data != "failed") {
+						var photo = self.waypoint.get("photo") || [];
+						console.log(photo);
+						self.waypoint.set("photo", [...photo, data]);
+						self.imageUrls = self.waypoint.get("photo");
+						console.log(self.imageUrls)
+					}
+				}).catch((error) => {
+					console.log(error);
+				});
 		}
 	},
   data() {
@@ -150,8 +175,7 @@ export default {
 	previousMarker: null,
       isImageModalActive: false,
       imageUrls: [
-        "https://www.sydney.com/sites/sydney/files/styles/gallery_full_width/public/2017-12/Jacarandas%20in%20Spring%20bloom%2C%20Royal%20Botanic%20Garden%2C%20Sydney.jpg?itok=zpohBz_j",
-        "https://www.adventure24.pl/upload/products/australia-objazd--gora-kosciuszki-1354716105.jpg"
+        
       ],
       title: "Przykładowa nazwa",
       description:

@@ -38,7 +38,7 @@ export default {
             latitude: lat,
             longitude: lon,
             date: date,
-            photo: null,
+            photos: null,
             video: null
         };
     },
