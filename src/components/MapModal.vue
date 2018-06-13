@@ -115,7 +115,7 @@ export default {
     deleteWaypoint: function() {
 		this.isEdit=false;
 		
-		this.$emit("remove-waypoint", this.waypoint.get("id"));
+		this.$emit("remove-waypoint", this.waypoint);
 		this.$parent.close();
     }
   },

@@ -121,6 +121,7 @@
         	</template>
     	</b-table>
 		
+		<p>
 		<div>
 			<input class="button is-link" v-on:click="saveGPSFile" type="button" value="Save GPX file">
 			<b-upload v-model="files">
@@ -133,9 +134,18 @@
 		</div>
 		
 		<div>
-			<input class="button is-danger is-pulled-right" v-on:click="deleteTrip"  type="button" value="Delete Trip" style="margin-left: 5px"> 
-			<input class="button is-link is-pulled-right" v-on:click="updateAll" type="button" value="Save Trip">
+			<input class="button is-danger is-pulled-right is-medium l-gap" v-on:click="deleteTrip"  type="button" value="Delete Trip"> 
+			<input class="button is-link is-pulled-right is-medium" v-on:click="updateAll" type="button" value="Save Trip">
 		</div>
+		</p>
+		<p>
+			<input class="button is-link t-gap" v-on:click="createPoster" type="button" value="Create Poster">
+			<input id="poster-btn" class="button is-link t-gap" v-on:click="getPoster" type="button" value="Download Poster" disabled>
+		</p>
+		<p>
+			<input class="button is-link t-gap" v-on:click="createPresentation" type="button" value="Create Presentation">
+			<input id="presentation-btn" class="button is-link t-gap" v-on:click="getPresentation" type="button" value="Download Presentation" disabled>
+		</p>
 			
 	</div>
 	<div v-else>
@@ -427,7 +437,19 @@ export default {
 					break;
 				} 
 			}
-		}
+		},
+		createPoster(){
+			DataService.createPoster(this.siteData.trip.tripId);
+		},
+		getPoster(){
+			DataService.getPoster(this.siteData.trip.tripId);
+			},
+		createPresentation(){
+			DataService.createPresentation(this.siteData.trip.tripId);
+		},
+		getPresentation(){
+			DataService.getPresentation(this.siteData.trip.tripId);
+			}
 	}
 }
 
@@ -451,5 +473,13 @@ li {
 }
 a {
   color: #42b983;
+}
+
+.t-gap {
+  margin-top: 4px;
+}
+
+.l-gap {
+  margin-left: 4px;
 }
 </style>

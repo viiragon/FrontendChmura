@@ -214,7 +214,32 @@ export default {
 				});
 		});
 	},
+
 	deleteTrip(tripId) {
 		return http.delete("trips/" + tripId);
+	},
+
+	createPoster(tripId){
+		http.post("trips/" + tripId + "/poster").then(posterUrl => {
+			console.log(posterUrl);
+		});
+	},
+
+	getPoster(tripId){
+		http.get("trips/" + tripId + "/presentation").then(posterUrl => {
+			window.open(posterUrl);
+		});
+	},
+
+	createPresentation(tripId){
+		http.post("trips/" + tripId + "/presentation").then(presUrl => {
+			console.log(presUrl);
+		});
+	},
+
+	getPresentation(tripId){
+		http.get("trips/" + tripId + "/presentation").then(presUrl => {
+			window.open(presUrl);
+		});
 	}
 }
